@@ -41,6 +41,9 @@ El contenido de los cursos será compartido por todos los estudiantes. Aparte, c
 
 ### 3.3. Entidades principales
 
+- **Controlador:** maneja el flujo de la aplicación.
+- **GestorArchivos:** maneja la lectura y escritura de información.
+- **Usuarios:** clase padre de Profesor y Estudiante.
 - **Profesor:** administra estudiantes y consulta sus resultados.
 - **Estudiante:** pertenece a un profesor, está inscrito en un curso y registra su progreso.
 - **Curso:** contiene los módulos de un curso educativo.
@@ -61,8 +64,8 @@ El contenido de los cursos será compartido por todos los estudiantes. Aparte, c
 | Árbol balanceado AVL | Modulos | Organizar los modulos de cada curso atraves de su ID |
 | Vector | Estudiantes | Almacenar estudiantes, facilitar su administración y visualizar datos |
 | MergeSort | Estudiantes | Ordenar de mayor a menor progreso general |
-| MergeSort | Estudiantes | Ordenar por ID ascendente |
-| MergeSort | Estudiantes | Ordenar alfabéticamente por nombre |
+| HeapSort | Estudiantes | Ordenar por ID ascendente |
+| QuickSort | Estudiantes | Ordenar alfabéticamente por nombre |
 | Lista doblemente enlazada | Lecciones | Organizar las lecciones de cada modulo |
 | Tabla hash | Ejercicios | Almacenar y consultar todos los ejercicios de la aplicacion mediante su ID |
 | Cola | Ejercicios | Administrar temporalmente los ejercicios pendientes de un estudiante en una lección |
@@ -86,9 +89,9 @@ Cantidades preliminares:
 
 ## 6. Persistencia de información
 
-Se usuara un gestor de archivos para conservar la información necesaria entre ejecuciones.
+Se usará un gestor de archivos para conservar la información necesaria entre ejecuciones.
 
-Informacion a consultar (lectura):
+Información a consultar (lectura):
 
 - Profesores
 - Estudiantes
@@ -97,6 +100,6 @@ Informacion a consultar (lectura):
 - Progreso individual
 - Historiales de ejercicios y evaluaciones
 
-Informacion a guardar (escritura):
+Información a guardar (escritura):
 - Progreso individual
 - Historiales de ejercicios y evaluaciones
