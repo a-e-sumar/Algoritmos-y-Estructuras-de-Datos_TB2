@@ -60,7 +60,9 @@ El contenido de los cursos será compartido por todos los estudiantes. Aparte, c
 | Árbol balanceado AVL | Cursos | Organizar los cursos mediante su ID |
 | Árbol balanceado AVL | Modulos | Organizar los modulos de cada curso atraves de su ID |
 | Vector | Estudiantes | Almacenar estudiantes, facilitar su administración y visualizar datos |
-| MergeSort | Estudiantes | Ordenar estudiantes según su progreso general |
+| MergeSort | Estudiantes | Ordenar de mayor a menor progreso general |
+| MergeSort | Estudiantes | Ordenar por ID ascendente |
+| MergeSort | Estudiantes | Ordenar alfabéticamente por nombre |
 | Lista doblemente enlazada | Lecciones | Organizar las lecciones de cada modulo |
 | Tabla hash | Ejercicios | Almacenar y consultar todos los ejercicios de la aplicacion mediante su ID |
 | Cola | Ejercicios | Administrar temporalmente los ejercicios pendientes de un estudiante en una lección |
