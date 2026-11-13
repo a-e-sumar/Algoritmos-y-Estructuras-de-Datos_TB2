@@ -66,3 +66,19 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+
+# Visual Studio / MSBuild
+.vs/
+*.user
+*.suo
+*.sln.docstates
+*.tlog
+
+# Salida de compilación MSBuild (Visual Studio C++)
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
