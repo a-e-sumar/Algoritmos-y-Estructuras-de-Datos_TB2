@@ -57,21 +57,29 @@ El contenido de los cursos será compartido por todos los estudiantes. Aparte, c
 
 ## 4. Estructuras de datos y algoritmos
 
+### 4.1 Estructuras de datos
+
 | Estructura o algoritmo | Entidad | Aplicación dentro del sistema |
 |---|---|---|
-| Árbol binario de búsqueda (BST) | Profesores | Almacenar y buscar profesores atraves de su ID |
+| Árbol binario de búsqueda (BST) | Profesores | Almacenar y buscar profesores a través de su ID |
 | Árbol balanceado AVL | Cursos | Organizar los cursos mediante su ID |
-| Árbol balanceado AVL | Modulos | Organizar los modulos de cada curso atraves de su ID |
-| Vector | Estudiantes | Almacenar estudiantes, facilitar su administración y visualizar datos |
-| MergeSort | Estudiantes | Ordenar de mayor a menor progreso general |
-| HeapSort | Estudiantes | Ordenar por ID ascendente |
-| QuickSort | Estudiantes | Ordenar alfabéticamente por nombre |
-| Lista doblemente enlazada | Lecciones | Organizar las lecciones de cada modulo |
-| Tabla hash | Ejercicios | Almacenar y consultar todos los ejercicios de la aplicacion mediante su ID |
+| Árbol balanceado AVL | Módulos | Organizar los módulos de cada curso a través de su ID |
+| Tabla Hash | Estudiantes | Almacenar y consultar todos los estudiantes de la aplicación mediante su ID |
+| Lista doblemente enlazada | Lecciones | Organizar las lecciones de cada módulo |
+| Tabla hash | Ejercicios | Almacenar y consultar todos los ejercicios de la aplicación mediante su ID |
 | Cola | Ejercicios | Administrar temporalmente los ejercicios pendientes de un estudiante en una lección |
+| Progreso | Tabla hash | Almacenar y consultar el progreso de todos los estudiantes mediante el ID del estudiante |
 | Vector de historial | HistorialEjercicios | Registrar los ejercicios completados |
 | Vector de historial | HistorialEvaluaciones | Registrar las evaluaciones realizadas |
 | Grafo | TBD | TBD |
+
+### 4.2 Ordenamiento Avanzado
+
+| Algoritmos | Entidad | Aplicación dentro del sistema |
+|---|---|---|
+| MergeSort | Estudiantes | Ordenar de mayor a menor progreso general |
+| HeapSort | Estudiantes | Ordenar por ID ascendente |
+| QuickSort | Estudiantes | Ordenar alfabéticamente por nombre |
 
 ## 5. Generador de dataset
 
