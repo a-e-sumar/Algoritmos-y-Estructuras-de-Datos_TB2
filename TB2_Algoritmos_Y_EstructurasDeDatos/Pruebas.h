@@ -1,0 +1,152 @@
+#pragma once
+#include <iostream>
+#include <string>
+
+#include "Profesor.h"
+#include "Estudiante.h"
+#include "ProfesorBST.h"
+#include "EstudianteHashTable.h"
+using namespace std;
+
+
+Profesor crearProfesor(int id, string nombre, int idCurso) {
+    return Profesor(id, nombre, "Flores", nombre + "@uni.edu", "clave", idCurso);
+}
+
+Estudiante crearEstudiante(int id, string nombre, int idProf, int idCurso) {
+    return Estudiante(id, nombre, "Sanchez", nombre + "@uni.edu", "clave", idProf, idCurso);
+}
+
+void probarBST() {
+    bool insertar = true;
+    bool buscar = true;
+    bool duplicado = true;
+    bool eliminar = true;
+    bool vaciar = true;
+
+    ProfesorBST<Profesor> arbol;
+
+    // Insertar
+    if (arbol.insertar(crearProfesor(50, "Camila", 100)) == false) insertar = false;
+    if (arbol.insertar(crearProfesor(30, "Ana", 101)) == false) insertar = false;
+    if (arbol.insertar(crearProfesor(70, "Carla", 102)) == false) insertar = false;
+    if (arbol.insertar(crearProfesor(20, "Daniel", 103)) == false) insertar = false;
+    if (arbol.insertar(crearProfesor(40, "Ignacio", 104)) == false) insertar = false;
+    if (arbol.insertar(crearProfesor(60, "Pedro", 105)) == false) insertar = false;
+    if (arbol.insertar(crearProfesor(80, "Carlos", 106)) == false) insertar = false;
+
+    if (arbol.contarProfesores() != 7) insertar = false;
+
+    // Buscar
+    if (arbol.getProfesor(50) == nullptr) buscar = false;
+    if (arbol.getProfesor(20) == nullptr) buscar = false;
+    if (arbol.getProfesor(80) == nullptr) buscar = false;
+    if (arbol.getProfesor(1000) != nullptr) buscar = false;
+
+    if (arbol.getProfesor(1) != nullptr) buscar = false;
+
+    // Duplicado
+    if (arbol.insertar(crearProfesor(50, "Duplicado", 1000)) == true) duplicado = false;
+
+    if (arbol.contarProfesores() != 7) duplicado = false;
+
+    // Eliminar
+    if (arbol.eliminar(20) == false) eliminar = false;
+    if (arbol.getProfesor(20) != nullptr) eliminar = false;
+    if (arbol.eliminar(30) == false) eliminar = false;
+    if (arbol.getProfesor(30) != nullptr) eliminar = false;
+    if (arbol.eliminar(50) == false) eliminar = false;
+    if (arbol.getProfesor(50) != nullptr) eliminar = false;
+    if (arbol.eliminar(1000) == true) eliminar = false;
+
+    if (arbol.contarProfesores() != 4) eliminar = false;
+
+    // Vaciar
+    arbol.eliminar(40);
+    arbol.eliminar(60);
+    arbol.eliminar(70);
+    arbol.eliminar(80);
+    if (arbol.getRaiz() != nullptr) vaciar = false;
+    if (arbol.contarProfesores() != 0) vaciar = false;
+
+    // Reporte
+    cout << "\n========== REPORTE BST ==========\n";
+    cout << "Insertar: " << insertar << "\n";
+    cout << "Buscar: " << buscar<< "\n";
+    cout << "Duplicado: " << duplicado << "\n";
+    cout << "Eliminar: " << eliminar << "\n";
+    cout << "Vaciar: " << vaciar << "\n";
+
+    int total = insertar + buscar + duplicado + eliminar + vaciar;
+    cout << "\nTotal: " << total << "/5\n\n";
+}
+
+void probarHash() {
+    bool insertar = true;
+    bool buscar = true;
+    bool duplicado = true;
+    bool eliminar = true;
+
+    EstudianteHashTable<Estudiante>* tabla = new EstudianteHashTable<Estudiante>();
+
+    // Insertar
+    tabla->insertar(crearEstudiante(9, "Camila", 1, 10));
+    tabla->insertar(crearEstudiante(4002, "Ana", 1, 10));
+    tabla->insertar(crearEstudiante(8004, "Carla", 2, 20));
+    tabla->insertar(crearEstudiante(5, "Daniel", 1, 10));
+    tabla->insertar(crearEstudiante(6, "Ignacio", 1, 10));
+    tabla->insertar(crearEstudiante(7, "Pedro", 1, 10));
+    tabla->insertar(crearEstudiante(8, "Carlos", 1, 10));
+
+    if (tabla->getCantidad() != 7) insertar = false;
+    if (tabla->getCapacidad() != TAM_ESTUDIANTES) insertar = false;
+
+    // Buscar
+    if (tabla->buscar(9) == -1) buscar = false;
+    if (tabla->buscar(4002) == -1) buscar = false;
+    if (tabla->buscar(8004) == -1) buscar = false;
+    if (tabla->buscar(5) == -1) buscar = false;
+    if (tabla->buscar(6) == -1) buscar = false;
+    if (tabla->buscar(8) == -1) buscar = false;
+    if (tabla->buscar(100) != -1) buscar = false;
+
+    // Duplicado
+    if (tabla->duplicado(5) == false) duplicado = false;
+    if (tabla->duplicado(100) == true) duplicado = false;
+
+    tabla->insertar(crearEstudiante(5, "Duplicado", 1, 10));
+    if (tabla->getCantidad() != 7) duplicado = false;
+
+    // Eliminar
+    tabla->eliminar(6);
+    if (tabla->buscar(6) != -1) eliminar = false;
+
+    tabla->eliminar(4002);
+    if (tabla->buscar(4002) != -1) eliminar = false;
+
+    tabla->eliminar(100); // Buscar "No se puedo eliminar" en el output
+
+    tabla->insertar(crearEstudiante(6, "Ignacio", 1, 10));
+    if (tabla->buscar(6) == -1) eliminar = false;
+    if (tabla->getCantidad() != 6) eliminar = false;
+    delete tabla;
+
+    // Reporte
+    cout << "\n========== REPORTE HASH ==========\n";
+    cout << "Insertar: " << insertar << "\n";
+    cout << "Buscar: " << buscar << "\n";
+    cout << "Duplicado: " << duplicado << "\n";
+    cout << "Eliminar: " << eliminar << "\n";
+
+    int total = insertar + buscar + duplicado + eliminar;
+    cout << "\nTotal: " << total << "/4\n\n";
+}
+
+void ejecutarPruebas() {
+    cout << "\tINICIO DE PRUEBAS\n\n";
+    cout << "\nBST:\n";
+    probarBST();
+    cout << "\nHash:\n";
+    probarHash();
+    cout << "\n\tFIN DE PRUEBAS\n";
+}
