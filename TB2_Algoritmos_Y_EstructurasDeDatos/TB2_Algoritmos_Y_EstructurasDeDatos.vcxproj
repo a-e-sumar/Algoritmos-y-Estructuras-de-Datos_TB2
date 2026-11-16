@@ -142,10 +142,13 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Curso.h" />
     <ClInclude Include="Estudiante.h" />
+    <ClInclude Include="EstudianteGestor.h" />
     <ClInclude Include="EstudianteHashTable.h" />
     <ClInclude Include="Profesor.h" />
     <ClInclude Include="ProfesorBST.h" />
+    <ClInclude Include="Progreso.h" />
     <ClInclude Include="Pruebas.h" />
     <ClInclude Include="Usuario.h" />
   </ItemGroup>

@@ -38,5 +38,14 @@
     <ClInclude Include="Pruebas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EstudianteGestor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Curso.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Progreso.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
