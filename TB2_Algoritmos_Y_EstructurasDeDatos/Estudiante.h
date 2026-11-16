@@ -49,4 +49,14 @@ public:
     // Setters
     void setIdProfesor(int pidProfesor) { idProfesor = pidProfesor; }
     void setIdCurso(int pidCurso) { idCurso = pidCurso; }
+
+    // Metodos
+    void mostrarEstudiante() {
+        cout << "\n=== Informacion del estudiante ===\n";
+        cout << "ID: " << id << endl;
+        cout << "Nombre: " << nombre << endl;
+        cout << "Apellido: " << apellido << endl;
+        cout << "Correo electronico: " << correo << endl;
+        cout << "Progreso curso: " << progreso.getProgresoCurso() << endl;
+    }
 };

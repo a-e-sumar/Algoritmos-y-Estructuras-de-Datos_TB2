@@ -6,8 +6,8 @@
 #include "Estudiante.h"
 #include "ProfesorBST.h"
 #include "EstudianteHashTable.h"
+#include "EstudianteGestor.h"
 using namespace std;
-
 
 Profesor crearProfesor(int id, string nombre, int idCurso) {
     return Profesor(id, nombre, "Flores", nombre + "@uni.edu", "clave", idCurso);
