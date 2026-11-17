@@ -7,6 +7,7 @@
 #include "ProfesorBST.h"
 #include "EstudianteHashTable.h"
 #include "EstudianteGestor.h"
+#include "Curso.h"
 using namespace std;
 
 Profesor crearProfesor(int id, string nombre, int idCurso) {
@@ -15,6 +16,10 @@ Profesor crearProfesor(int id, string nombre, int idCurso) {
 
 Estudiante crearEstudiante(int id, string nombre, int idProf, int idCurso) {
     return Estudiante(id, nombre, "Sanchez", nombre + "@uni.edu", "clave", idProf, idCurso);
+}
+
+Curso crearCurso(int id, string nombre, int idProf) {
+    return Curso(id, idProf, nombre);
 }
 
 void probarBST() {
@@ -142,11 +147,56 @@ void probarHash() {
     cout << "\nTotal: " << total << "/4\n\n";
 }
 
+void probarCurso() {
+    bool constructor = true;
+    bool agregar = true;
+    bool duplicado = true;
+    bool eliminar = true;
+
+    Curso curso(1, 10, "Algoritmos");
+
+    // Constructor
+    if (curso.getIdCurso() != 1) constructor = false;
+    if (curso.getIdProfesor() != 10) constructor = false;
+    if (curso.getNombre() != "Algoritmos") constructor = false;
+    if (curso.getCantidadEstudiantes() != 0) constructor = false;
+
+    // Agregar
+    if (curso.agregarEstudiante(100) == false) agregar = false;
+    if (curso.agregarEstudiante(200) == false) agregar = false;
+    if (curso.agregarEstudiante(300) == false) agregar = false;
+    if (curso.getCantidadEstudiantes() != 3) agregar = false;
+    if (curso.existeEstudiante(200) == false) agregar = false;
+    if (curso.existeEstudiante(999) == true) agregar = false;
+
+    // Duplicado
+    if (curso.agregarEstudiante(200) == true) duplicado = false;
+    if (curso.getCantidadEstudiantes() != 3) duplicado = false;
+
+    // Eliminar
+    if (curso.eliminarEstudiante(200) == false) eliminar = false;
+    if (curso.existeEstudiante(200) == true) eliminar = false;
+    if (curso.eliminarEstudiante(999) == true) eliminar = false;
+    if (curso.getCantidadEstudiantes() != 2) eliminar = false;
+
+    // Reporte
+    cout << "\n========== REPORTE CURSO ==========\n";
+    cout << "Constructor: " << constructor << "\n";
+    cout << "Agregar: " << agregar << "\n";
+    cout << "Duplicado: " << duplicado << "\n";
+    cout << "Eliminar: " << eliminar << "\n";
+
+    int total = constructor + agregar + duplicado + eliminar;
+    cout << "\nTotal: " << total << "/4\n\n";
+}
+
 void ejecutarPruebas() {
     cout << "\tINICIO DE PRUEBAS\n\n";
     cout << "\nBST:\n";
     probarBST();
     cout << "\nHash:\n";
     probarHash();
+    cout << "\nCurso:\n";
+    probarCurso();
     cout << "\n\tFIN DE PRUEBAS\n";
 }
