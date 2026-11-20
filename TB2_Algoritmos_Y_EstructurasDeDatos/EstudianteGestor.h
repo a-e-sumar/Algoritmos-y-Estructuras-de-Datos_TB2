@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "EstudianteHashTable.h"
 #include "Estudiante.h"
 #include "Curso.h"
@@ -81,7 +82,38 @@ private:
         merge(lista, inicio, medio, fin);
     }
 
-    void heapSort() { } // Implementar ordenamiento por ID ascendente
+    void heapify(vector<Estudiante>& lista, int n, int indicePadre)
+    {
+        int mayor = indicePadre;
+        int izquierdo = 2 * indicePadre + 1;
+        int derecho = 2 * indicePadre + 2;
+        if (izquierdo < n && lista[izquierdo].getId() > lista[mayor].getId()) {
+            mayor = izquierdo;
+        }
+        if (derecho < n && lista[derecho].getId() > lista[mayor].getId()) {
+            mayor = derecho;
+        }
+        if (mayor != indicePadre) {
+            swap(lista[indicePadre], lista[mayor]);
+            heapify(lista, n, mayor);
+        }
+    }
+    void heapSort(vector<Estudiante>& lista, int n)
+    {
+        // 1. Construir Max-Heap
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            heapify(lista, n, i);
+        }
+
+        // 2. Extraer elementos uno por uno
+        for (int i = n - 1; i > 0; i--) {
+            // Mover el máximo al final
+            swap(lista[0], lista[i]);
+            // Reconstruir el Heap
+            heapify(lista, i, 0);
+        }
+    }
+
     void quickSort(int inicio, int fin) { } // Implementar ordenamiento por nombre
 
     void liberar() {
@@ -93,11 +125,11 @@ public:
     EstudianteGestor() {
         ordenadoID = false;
     }
-    EstudianteGestor(const vector<int>& idsEstudiantes, EstudianteHashTable<Estudiante>& tabla) {
+    EstudianteGestor(const vector<int>& idsEstudiantes, EstudianteHashTable<Estudiante>* tabla) {
         ordenadoID = false;
 
         for (size_t i = 0; i < idsEstudiantes.size(); i++) {
-            Estudiante* estudiante = tabla.getEstudiante(idsEstudiantes[i]);
+            Estudiante* estudiante = tabla->getEstudiante(idsEstudiantes[i]);
 
             if (estudiante != nullptr) {
                 estudiantes.push_back(*estudiante);
@@ -111,8 +143,8 @@ public:
 
     // Metodos
     void listarEstudiantes() {
-        cout << "\n\t\t=== Estudiantes ===\n";
-        cout << "#\tId\tNombre\tProgreso\n";
+        cout << "\n\t=== Estudiantes ===\n\n";
+        cout << "#\tId\tNombre\t\tProgreso\n";
         cout << "------------------------------------------------\n";
 
         for (size_t i = 0; i < estudiantes.size(); i++) {
@@ -124,7 +156,8 @@ public:
     }
     void buscarEstudiante(int idBuscado) {
         if (!ordenadoID) {
-            heapSort();
+            heapSort(estudiantes, estudiantes.size());
+            ordenadoID = true;
         }
 
         int posicion = binarySearch(idBuscado);
@@ -177,7 +210,17 @@ public:
         cout << "\n=== Estudiantes ordenados por progreso ===\n";
         listarEstudiantes();
     }
-    void ordenarID() { }
+    void ordenarID() { 
+        if (estudiantes.size() <= 1) {
+            cout << "No hay suficientes estudiantes para ordenar\n";
+            return;
+        }
+
+        heapSort(estudiantes, estudiantes.size());
+        ordenadoID = true;
+        cout << "\n=== Estudiantes ordenados por id ===\n";
+        listarEstudiantes();
+    }
     void ordenarNombre() { }
 
 

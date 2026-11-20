@@ -57,6 +57,6 @@ public:
         cout << "Nombre: " << nombre << endl;
         cout << "Apellido: " << apellido << endl;
         cout << "Correo electronico: " << correo << endl;
-        cout << "Progreso curso: " << progreso.getProgresoCurso() << endl;
+        cout << "Progreso curso: " << progreso.getProgresoCurso() << "%" << endl;
     }
 };

@@ -47,5 +47,11 @@
     <ClInclude Include="Progreso.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CursoAVL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TB2_Algoritmos_Y_EstructurasDeDatos.slnx" />
   </ItemGroup>
 </Project>

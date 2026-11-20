@@ -143,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Curso.h" />
+    <ClInclude Include="CursoAVL.h" />
     <ClInclude Include="Estudiante.h" />
     <ClInclude Include="EstudianteGestor.h" />
     <ClInclude Include="EstudianteHashTable.h" />
@@ -151,6 +152,9 @@
     <ClInclude Include="Progreso.h" />
     <ClInclude Include="Pruebas.h" />
     <ClInclude Include="Usuario.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TB2_Algoritmos_Y_EstructurasDeDatos.slnx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
