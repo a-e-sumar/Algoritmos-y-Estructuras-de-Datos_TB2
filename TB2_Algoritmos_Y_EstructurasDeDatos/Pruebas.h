@@ -15,8 +15,8 @@ Profesor crearProfesor(int id, string nombre, int idCurso) {
     return Profesor(id, nombre, "Flores", nombre + "@uni.edu", "clave", idCurso);
 }
 
-Estudiante crearEstudiante(int id, string nombre, int idProf, int idCurso) {
-    return Estudiante(id, nombre, "Sanchez", nombre + "@uni.edu", "clave", idProf, idCurso);
+Estudiante crearEstudiante(int id, string nombre, int idProf, int idCurso, int progresoCurso) {
+    return Estudiante(id, nombre, "Sanchez", nombre + "@uni.edu", "clave", idProf, idCurso, progresoCurso);
 }
 
 Curso crearCurso(int id, string nombre, int idProf) {
@@ -96,13 +96,13 @@ void probarHash() {
     EstudianteHashTable<Estudiante>* tabla = new EstudianteHashTable<Estudiante>();
 
     // Insertar
-    tabla->insertar(crearEstudiante(9, "Camila", 1, 10));
-    tabla->insertar(crearEstudiante(4002, "Ana", 1, 10));
-    tabla->insertar(crearEstudiante(8004, "Carla", 2, 20));
-    tabla->insertar(crearEstudiante(5, "Daniel", 1, 10));
-    tabla->insertar(crearEstudiante(6, "Ignacio", 1, 10));
-    tabla->insertar(crearEstudiante(7, "Pedro", 1, 10));
-    tabla->insertar(crearEstudiante(8, "Carlos", 1, 10));
+    tabla->insertar(crearEstudiante(9, "Camila", 1, 10, 90));
+    tabla->insertar(crearEstudiante(4002, "Ana", 1, 10, 20));
+    tabla->insertar(crearEstudiante(8004, "Carla", 2, 20, 30));
+    tabla->insertar(crearEstudiante(5, "Daniel", 1, 10, 60));
+    tabla->insertar(crearEstudiante(6, "Ignacio", 1, 10, 50));
+    tabla->insertar(crearEstudiante(7, "Pedro", 1, 10, 45));
+    tabla->insertar(crearEstudiante(8, "Carlos", 1, 10, 10));
 
     if (tabla->getCantidad() != 7) insertar = false;
     if (tabla->getCapacidad() != TAM_ESTUDIANTES) insertar = false;
@@ -120,7 +120,7 @@ void probarHash() {
     if (tabla->duplicado(5) == false) duplicado = false;
     if (tabla->duplicado(100) == true) duplicado = false;
 
-    tabla->insertar(crearEstudiante(5, "Duplicado", 1, 10));
+    tabla->insertar(crearEstudiante(5, "Duplicado", 1, 10, 80));
     if (tabla->getCantidad() != 7) duplicado = false;
 
     // Eliminar
@@ -132,7 +132,7 @@ void probarHash() {
 
     tabla->eliminar(100); // Buscar "No se puedo eliminar" en el output
 
-    tabla->insertar(crearEstudiante(6, "Ignacio", 1, 10));
+    tabla->insertar(crearEstudiante(6, "Ignacio", 1, 10, 90));
     if (tabla->buscar(6) == -1) eliminar = false;
     if (tabla->getCantidad() != 6) eliminar = false;
     delete tabla;
@@ -146,6 +146,37 @@ void probarHash() {
 
     int total = insertar + buscar + duplicado + eliminar;
     cout << "\nTotal: " << total << "/4\n\n";
+}
+
+void probarEstudiantes() {
+    bool buscar;
+    bool ordenProgreso;
+    bool ordenId;
+
+    EstudianteHashTable<Estudiante>* tabla = new EstudianteHashTable<Estudiante>;
+
+    // Insertar
+    tabla->insertar(crearEstudiante(9, "Camila", 1, 10, 90));
+    tabla->insertar(crearEstudiante(4002, "Ana", 1, 10, 20));
+    tabla->insertar(crearEstudiante(8004, "Carla", 2, 10, 30));
+    tabla->insertar(crearEstudiante(5, "Daniel", 1, 10, 60));
+    tabla->insertar(crearEstudiante(6, "Ignacio", 1, 10, 50));
+    tabla->insertar(crearEstudiante(7, "Pedro", 1, 10, 45));
+    tabla->insertar(crearEstudiante(8, "Carlos", 1, 10, 10));
+
+    vector<int> ids = { 9, 4002, 8004, 5, 6, 7, 8 };
+    EstudianteGestor gestor(ids, tabla);
+
+    gestor.listarEstudiantes();
+
+    gestor.menorProgreso();
+    gestor.mayorProgreso();
+
+    gestor.ordenarID();
+    gestor.ordenarProgreso();
+
+    gestor.buscarEstudiante(100);
+    gestor.buscarEstudiante(8);
 }
 
 void probarCurso() {
@@ -316,6 +347,8 @@ void ejecutarPruebas() {
     probarBST();
     cout << "\nHash:\n";
     probarHash();
+    cout << "\nEstudainte Gestor:\n";
+    probarEstudiantes();
     cout << "\nCurso:\n";
     probarCurso();
 	cout << "\nCurso AVL:\n";
