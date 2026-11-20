@@ -174,6 +174,7 @@ void probarEstudiantes() {
 
     gestor.ordenarID();
     gestor.ordenarProgreso();
+    gestor.ordenarNombre();
 
     gestor.buscarEstudiante(100);
     gestor.buscarEstudiante(8);

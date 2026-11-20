@@ -114,7 +114,59 @@ private:
         }
     }
 
-    void quickSort(int inicio, int fin) { } // Implementar ordenamiento por nombre
+    string aMinuscula(string texto) {
+        for (size_t i = 0; i < texto.size(); i++) {
+            texto[i] = (char)tolower((unsigned char)texto[i]);
+        }
+        return texto;
+    }
+
+    // primero por nombre, si empatan por apellido y luego por id
+    bool nombreMenorIgual(Estudiante& a, Estudiante& b) {
+        string nombreA = aMinuscula(a.getNombre());
+        string nombreB = aMinuscula(b.getNombre());
+        if (nombreA != nombreB) return nombreA < nombreB;
+
+        string apellidoA = aMinuscula(a.getApellido());
+        string apellidoB = aMinuscula(b.getApellido());
+        if (apellidoA != apellidoB) return apellidoA < apellidoB;
+
+        return a.getId() <= b.getId();
+    }
+
+    // Particionar
+    int particionarNombre(int inicio, int fin) {
+        // Elegimos el elemento del medio como pivote y lo movemos al final
+        int medio = inicio + (fin - inicio) / 2;
+        swap(estudiantes[medio], estudiantes[fin]);
+
+        Estudiante pivote = estudiantes[fin];
+        int i = inicio - 1;
+
+        for (int j = inicio; j < fin; j++) {
+            // Si el estudiante va antes o igual que el pivote
+            if (nombreMenorIgual(estudiantes[j], pivote)) {
+                i++;
+                swap(estudiantes[i], estudiantes[j]);
+            }
+        }
+        // Colocar el pivote en su posicion correcta
+        swap(estudiantes[i + 1], estudiantes[fin]);
+        return i + 1;
+    }
+
+    // QuickSort por nombre (A-Z)
+    void quickSort(int inicio, int fin) {
+        // Caso base
+        if (inicio >= fin)
+            return;
+
+        int posicionPivote = particionarNombre(inicio, fin);
+        // Ordenar lado izquierdo
+        quickSort(inicio, posicionPivote - 1);
+        // Ordenar lado derecho
+        quickSort(posicionPivote + 1, fin);
+    }
 
     void liberar() {
         estudiantes.clear();
@@ -154,6 +206,8 @@ public:
         }
         cout << endl;
     }
+
+
     void buscarEstudiante(int idBuscado) {
         if (!ordenadoID) {
             heapSort(estudiantes, estudiantes.size());
@@ -221,9 +275,15 @@ public:
         cout << "\n=== Estudiantes ordenados por id ===\n";
         listarEstudiantes();
     }
-    void ordenarNombre() { }
+    void ordenarNombre() {
+        if (estudiantes.size() <= 1) {
+            cout << "No hay suficientes estudiantes para ordenar\n";
+            return;
+        }
 
-
+        quickSort(0, (int)estudiantes.size() - 1);
+        ordenadoID = false;
+        cout << "\n=== Estudiantes ordenados por nombre ===\n";
+        listarEstudiantes();
+    }
 };
-
-
