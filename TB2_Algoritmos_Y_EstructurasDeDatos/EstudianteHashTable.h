@@ -5,8 +5,8 @@
 using namespace std;
 
 // se espera insertar 5000 estudiantes
-// en el caso de insertar mas estudiantes se utiliza el numero primo mas cercano a la cantidad * 2
-const int TAM_ESTUDIANTES = 10007;
+// en el caso de que se inserten mas estudiantes se utiliza un numero primo 500 + cantidad
+const int TAM_ESTUDIANTES = 5501;
 const int VACIA = 0;
 const int OCUPADA = 1;
 const int ELIMINADA = 2;
@@ -33,7 +33,7 @@ private:
 		return clave % TAM_ESTUDIANTES;
 	}
 	int funcionHash2(int clave) {
-		return 9973 - (clave % 9973);
+		return 5483 - (clave % 5483);
 	}
 	int calcularPosicion(int hashInicial, int salto, int colisiones) {
 		return (hashInicial + colisiones * salto) % TAM_ESTUDIANTES;
