@@ -92,7 +92,6 @@ void generarProfesor(ProfesorBST<Profesor>& profesores) {
 
     if (insertados != PROFESORES) {
         cout << "ADVERTENCIA: se insertaron " << insertados << " de " << PROFESORES << " profesores\n";
-        return;
     }
 }
 
@@ -118,7 +117,6 @@ void generarEstudiante(EstudianteHashTable<Estudiante>& estudiantes, ProfesorBST
 
     if (insertados != ESTUDIANTES) {
         cout << "ADVERTENCIA: se insertaron " << insertados << " de " << ESTUDIANTES << " estudiantes\n";
-        return;
     }
 }
 
@@ -144,6 +142,5 @@ void generarCursos(CursoAVL<Curso>& cursos, ProfesorBST<Profesor>& profesores, E
 
     if (insertados != CURSOS) {
         cout << "ADVERTENCIA: se insertaron " << insertados << " de " << CURSOS << " cursos\n";
-        return;
     }
 }
