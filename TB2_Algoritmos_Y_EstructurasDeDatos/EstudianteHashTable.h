@@ -53,18 +53,18 @@ public:
 	int getCapacidad() { return TAM_ESTUDIANTES; }
 
 	// Metodos
-	void insertar(T dato) {
+	bool insertar(T dato) {
 		int clave = dato.getId();
 		int hashInicial = funcionHash(clave);
 		int salto = funcionHash2(clave);
 
 		if (cantidad >= TAM_ESTUDIANTES) {
 			cout << "ERROR: No se puede insertar mas estudiantes\n";
-			return;
+			return false;
 		}
 		if (duplicado(clave)) {
 			cout << "ERROR: El estudiante ya existe\n";
-			return;
+			return false;
 		}
 
 		for (int i = 0; i < TAM_ESTUDIANTES; i++) {
@@ -75,12 +75,13 @@ public:
 				tabla[posicion].estado = OCUPADA;
 				cantidad++;
 				cout << "Estudiante insertado correctamente\n";
-				return;
+				return true;
 			}
 
 			colisiones++;
 		}
 		cout << "No se pudo insertar " << clave << endl;
+		return false;
 	}
 	int buscar(int clave) {
 		int hashInicial = funcionHash(clave);
