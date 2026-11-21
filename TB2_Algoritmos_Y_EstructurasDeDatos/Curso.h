@@ -41,7 +41,7 @@ public:
 
 	// Metodos
 	bool existeEstudiante(int idEstudiante) { // Verifica si esta inscrito en el curso
-		for (int i = 0; i < idsEstudiantes.size(); i++) {
+		for (size_t i = 0; i < idsEstudiantes.size(); i++) {
 			if (idsEstudiantes[i] == idEstudiante) {
 				return true;
 			}
@@ -58,7 +58,7 @@ public:
 	}
 
 	bool eliminarEstudiante(int idEstudiante) { // Elimina un estudiante del curso
-		for (int i = 0; i < idsEstudiantes.size(); i++) {
+		for (size_t i = 0; i < idsEstudiantes.size(); i++) {
 			if (idsEstudiantes[i] == idEstudiante) {
 				idsEstudiantes.erase(idsEstudiantes.begin() + i);
 				return true;

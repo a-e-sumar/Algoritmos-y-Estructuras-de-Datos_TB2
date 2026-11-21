@@ -149,9 +149,6 @@ void probarHash() {
 }
 
 void probarEstudiantes() {
-    bool buscar;
-    bool ordenProgreso;
-    bool ordenId;
 
     EstudianteHashTable<Estudiante>* tabla = new EstudianteHashTable<Estudiante>;
 
@@ -178,6 +175,8 @@ void probarEstudiantes() {
 
     gestor.buscarEstudiante(100);
     gestor.buscarEstudiante(8);
+
+	delete tabla;
 }
 
 void probarCurso() {
