@@ -148,6 +148,7 @@
     <ClInclude Include="EstudianteGestor.h" />
     <ClInclude Include="EstudianteHashTable.h" />
     <ClInclude Include="Evaluacion.h" />
+    <ClInclude Include="Generador.h" />
     <ClInclude Include="Profesor.h" />
     <ClInclude Include="ProfesorBST.h" />
     <ClInclude Include="Progreso.h" />

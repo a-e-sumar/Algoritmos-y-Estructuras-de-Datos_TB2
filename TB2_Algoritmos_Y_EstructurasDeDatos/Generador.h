@@ -20,21 +20,21 @@ const int EJERCICIOS = 20000;
 
 static string nombres[] = {
     "Olivia", "Noé", "Eliana", "Liam", "Amelia", "Oliver", "Charlotte", "Elías", "Sofía", "Mateo",
-    "Isabella", "Lucas", "Emma", "Elías", "Aurora", "Levi", "Evelyn", "Ezra", "Mia", "Leo", "Ellie", "Asher",
-    "Lily", "Luca", "Violeta", "Henry", "Sofía", "Hudson", "Hazel", "Theodore", "Ava", "James", "Aria", "Sebastián",
+    "Isabella", "Lucas", "Emma", "Adrián", "Aurora", "Levi", "Evelyn", "Ezra", "Mia", "Leo", "Ellie", "Asher",
+    "Lily", "Luca", "Violeta", "Henry", "Valeria", "Hudson", "Hazel", "Theodore", "Ava", "James", "Aria", "Sebastián",
     "Luna", "Samuel", "Ella", "Waylon", "Willow", "Daniel", "Nova", "Josiah", "Harper", "Theo", "Eleanor", "Cooper",
     "Gianna", "Wyatt", "Scarlett", "Gabriel", "Layla", "Maverick", "Lucy", "Jack", "Isla", "Julian", "Elena", "Benjamín",
     "Iris", "Grayson", "Penélope", "Santiago", "Hiedra", "Michael", "Lainey", "Rowan", "Elizabeth", "Mason", "Nora", "Luke",
     "Dalila", "Muhammad", "Chloe", "Isaías", "Valentina", "Alexander", "Camila", "Romano", "Paisley", "Ethan", "Mila", "Weston",
     "Avery", "Carter", "Naomi", "William", "Leilani", "David", "Sadie", "Silas", "Zoe", "Ezequiel", "Emilia", "Thomas",
     "Stella", "Enzo", "Zoey", "Owen", "Adeline", "Juan", "Amara", "Atlas", "Ayla", "Bennett", "Riley", "Isaac", "Gracia", "José",
-    "Abigail", "Mateo", "Sophie", "Kai", "Emily", "Beau", "Edén", "Nathan", "Millie", "Jackson", "Josie", "Jeremías",
+    "Abigail", "Bruno", "Sophie", "Kai", "Emily", "Beau", "Edén", "Nathan", "Millie", "Jackson", "Josie", "Jeremías",
     "Otoño", "Miles", "Atenea", "Wesley", "Daisy", "Caleb", "Maya", "Anthony", "Melodía", "Adam", "Raelynn", "Nolan",
     "Victoria", "Eli", "María", "Micah", "Clara", "Everett", "Eloise", "Lincoln", "Kinsley", "Malaquías", "Alice", "Charlie",
     "Aaliyah", "Logan", "Hannah", "Walker", "Ruby", "Aiden", "Madison", "Adrián", "Lyla", "Adriel", "Emery", "Amir",
     "Siena", "Sión", "Gabriella", "Joshua", "Vivian", "Xavier", "Lillian", "Myles", "Claire", "Arthur", "Liliana", "Jacob",
     "Oakley", "Luka", "Lydia", "Cameron", "Ember", "Río", "Magnolia", "Jaxon", "Serenidad", "Milo", "Amira", "Christopher",
-    "Josephine", "Colton", "Oaklynn", "Jayden", "Brielle", "Jaxson", "Everly", "Andrew", "Bella", "Stetson", "Charlie", "Archer",
+    "Josephine", "Colton", "Oaklynn", "Jayden", "Brielle", "Jaxson", "Everly", "Andrew", "Bella", "Stetson", "Orlando", "Archer",
     "Sarah", "Jasper", "Bean", "Axel", "Madelyn", "Brooks", "Juniper", "Dean"
 };
 static string apellidos[] = {
@@ -43,8 +43,8 @@ static string apellidos[] = {
     "Ramos", "Pérez", "Torres", "Díaz", "Gonzales",
     "Ramírez", "Mendoza", "Chávez", "Espinoza", "Castillo",
     "Fernández", "Vargas", "Gutiérrez", "Cruz", "Ruiz",
-    "De la Cruz", "Romero", "Gómez", "Silva", "Córdova",
-    "Condori", "Catro", "Martínez", "Reyes", "Rivera",
+    "Caro", "Romero", "Gómez", "Silva", "Córdova",
+    "Condori", "Castor", "Martínez", "Reyes", "Rivera",
     "Salazar", "Medina", "Aguilar", "Morales", "Paredes"
 };
 static string nombresCursos[] = {
