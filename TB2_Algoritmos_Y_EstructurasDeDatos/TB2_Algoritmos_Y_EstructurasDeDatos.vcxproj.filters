@@ -56,6 +56,15 @@
     <ClInclude Include="Generador.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EjercicioHashTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EjercicioCola.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ejercicio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="TB2_Algoritmos_Y_EstructurasDeDatos.slnx" />

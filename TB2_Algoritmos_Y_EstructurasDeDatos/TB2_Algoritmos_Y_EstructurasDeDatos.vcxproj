@@ -144,6 +144,9 @@
   <ItemGroup>
     <ClInclude Include="Curso.h" />
     <ClInclude Include="CursoAVL.h" />
+    <ClInclude Include="Ejercicio.h" />
+    <ClInclude Include="EjercicioCola.h" />
+    <ClInclude Include="EjercicioHashTable.h" />
     <ClInclude Include="Estudiante.h" />
     <ClInclude Include="EstudianteGestor.h" />
     <ClInclude Include="EstudianteHashTable.h" />
