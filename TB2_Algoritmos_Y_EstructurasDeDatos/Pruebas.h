@@ -9,6 +9,9 @@
 #include "EstudianteGestor.h"
 #include "Curso.h"
 #include "CursoAVL.h"
+#include "Ejercicio.h"
+#include "EjercicioHashTable.h"
+#include "EjercicioCola.h"
 using namespace std;
 
 Profesor crearProfesor(int id, string nombre, int idCurso) {
@@ -341,6 +344,200 @@ void probarCursoAVL() {
     cout << "\nTotal: " << total << "/7\n\n";
 }
 
+Ejercicio crearEjercicio(int id, int idLeccion) {
+    return Ejercicio(id, idLeccion, "Enunciado " + to_string(id), "Respuesta " + to_string(id));
+}
+
+void probarEjercicio() {
+    bool constructor = true;
+    bool setters = true;
+    bool respuesta = true;
+
+    // Constructor
+    Ejercicio vacio;
+    if (vacio.getIdEjercicio() != 0) constructor = false;
+    if (vacio.getEnunciado() != "") constructor = false;
+
+    Ejercicio ejercicio(7, 3, "Cuanto es 2 + 2?", "4");
+    if (ejercicio.getIdEjercicio() != 7) constructor = false;
+    if (ejercicio.getIdLeccion() != 3) constructor = false;
+    if (ejercicio.getEnunciado() != "Cuanto es 2 + 2?") constructor = false;
+    if (ejercicio.getRespuesta() != "4") constructor = false;
+
+    // Setters
+    ejercicio.setIdEjercicio(8);
+    ejercicio.setIdLeccion(4);
+    ejercicio.setEnunciado("Cuanto es 3 + 3?");
+    ejercicio.setRespuesta("6");
+    if (ejercicio.getIdEjercicio() != 8) setters = false;
+    if (ejercicio.getIdLeccion() != 4) setters = false;
+    if (ejercicio.getEnunciado() != "Cuanto es 3 + 3?") setters = false;
+    if (ejercicio.getRespuesta() != "6") setters = false;
+
+    // Verificar respuesta
+    if (ejercicio.verificarRespuesta("6") == false) respuesta = false;
+    if (ejercicio.verificarRespuesta("7") == true) respuesta = false;
+    if (ejercicio.verificarRespuesta("") == true) respuesta = false;
+    if (ejercicio.verificarRespuesta("4") == true) respuesta = false; // la respuesta anterior ya no es valida
+
+    // Reporte
+    cout << "\n========== REPORTE EJERCICIO ==========\n";
+    cout << "Constructor: " << constructor << "\n";
+    cout << "Setters: " << setters << "\n";
+    cout << "Respuesta: " << respuesta << "\n";
+
+    int total = constructor + setters + respuesta;
+    cout << "\nTotal: " << total << "/3\n\n";
+}
+
+void probarEjercicioHash() {
+    bool insertar = true;
+    bool buscar = true;
+    bool duplicado = true;
+    bool colisiones = true;
+    bool eliminar = true;
+    bool carga = true;
+
+    EjercicioHashTable<Ejercicio> tabla;
+
+    // Insertar
+    if (tabla.getCantidad() != 0) insertar = false;
+    if (tabla.getCapacidad() != TAM_EJERCICIOS) insertar = false;
+    for (int i = 1; i <= 10; i++) {
+        if (tabla.insertar(crearEjercicio(i, 1)) == false) insertar = false;
+    }
+    if (tabla.getCantidad() != 10) insertar = false;
+
+    // Buscar
+    if (tabla.getEjercicio(1) == nullptr) buscar = false;
+    if (tabla.getEjercicio(10) == nullptr) buscar = false;
+    if (tabla.getEjercicio(5) != nullptr && tabla.getEjercicio(5)->getEnunciado() != "Enunciado 5") buscar = false;
+    if (tabla.getEjercicio(100) != nullptr) buscar = false;
+    if (tabla.getEjercicio(0) != nullptr) buscar = false;
+
+    // Duplicado
+    if (tabla.duplicado(5) == false) duplicado = false;
+    if (tabla.duplicado(100) == true) duplicado = false;
+    if (tabla.insertar(Ejercicio(5, 9, "Duplicado", "x")) == true) duplicado = false;
+    if (tabla.getCantidad() != 10) duplicado = false;
+    if (tabla.getEjercicio(5)->getEnunciado() == "Duplicado") duplicado = false;
+
+    // Colisiones: 1 y 2585 caen en la misma posicion (encadenamiento)
+    EjercicioHashTable<Ejercicio> choque;
+    choque.insertar(crearEjercicio(1, 1));
+    choque.insertar(crearEjercicio(2585, 1));
+    if (choque.getColisiones() != 1) colisiones = false;
+    if (choque.getEjercicio(1) == nullptr || choque.getEjercicio(2585) == nullptr) colisiones = false;
+    if (choque.getMaxCadena() != 2) colisiones = false;
+    // Eliminar el primero de la lista (2585 se inserto al inicio) y luego el ultimo
+    if (choque.eliminar(2585) == false) colisiones = false;
+    if (choque.getEjercicio(1) == nullptr || choque.getEjercicio(2585) != nullptr) colisiones = false;
+    if (choque.getMaxCadena() != 1) colisiones = false;
+
+    // Eliminar
+    if (tabla.eliminar(3) == false) eliminar = false;
+    if (tabla.getEjercicio(3) != nullptr) eliminar = false;
+    if (tabla.eliminar(3) == true) eliminar = false;
+    if (tabla.eliminar(1000) == true) eliminar = false;
+    if (tabla.getCantidad() != 9) eliminar = false;
+    if (tabla.insertar(crearEjercicio(3, 2)) == false) eliminar = false;
+    if (tabla.getEjercicio(3) == nullptr || tabla.getEjercicio(3)->getIdLeccion() != 2) eliminar = false;
+    if (tabla.getCantidad() != 10) eliminar = false;
+
+    // Carga: 20000 ejercicios en una tabla de 4001 posiciones
+    EjercicioHashTable<Ejercicio> grande;
+    for (int i = 1; i <= 20000; i++) {
+        if (grande.insertar(crearEjercicio(i, i % 5000)) == false) carga = false;
+    }
+    if (grande.getCantidad() != 20000) carga = false;
+    for (int i = 1; i <= 20000; i++) {
+        Ejercicio* ejercicio = grande.getEjercicio(i);
+        if (ejercicio == nullptr || ejercicio->getIdEjercicio() != i) carga = false;
+    }
+    if (grande.getEjercicio(20001) != nullptr) carga = false;
+    if (grande.getMaxCadena() > 20) carga = false; // si el hash repartiera mal, las listas serian enormes
+    for (int i = 1; i <= 20000; i += 2) grande.eliminar(i);
+    if (grande.getCantidad() != 10000) carga = false;
+    if (grande.getEjercicio(2) == nullptr || grande.getEjercicio(3) != nullptr) carga = false;
+
+    // Reporte
+    cout << "\n========== REPORTE EJERCICIO HASH ==========\n";
+    cout << "Insertar: " << insertar << "\n";
+    cout << "Buscar: " << buscar << "\n";
+    cout << "Duplicado: " << duplicado << "\n";
+    cout << "Colisiones: " << colisiones << "\n";
+    cout << "Eliminar: " << eliminar << "\n";
+    cout << "Carga: " << carga << "\n";
+    cout << "Factor de carga (20000 ejercicios): " << (double)20000 / TAM_EJERCICIOS << "\n";
+
+    int total = insertar + buscar + duplicado + colisiones + eliminar + carga;
+    cout << "\nTotal: " << total << "/6\n\n";
+}
+
+void probarEjercicioCola() {
+    bool constructor = true;
+    bool fifo = true;
+    bool buscar = true;
+    bool vacia = true;
+
+    EjercicioHashTable<Ejercicio> tabla;
+    for (int i = 1; i <= 10; i++) tabla.insertar(crearEjercicio(i, 1));
+
+    // Constructor (IDs de una leccion)
+    vector<int> idsLeccion = { 3, 5, 7, 9 };
+    EjercicioCola cola(idsLeccion);
+    if (cola.getCantidad() != 4) constructor = false;
+    if (cola.estaVacia() == true) constructor = false;
+    if (cola.getIdFrente() != 3) constructor = false;
+
+    EjercicioCola sinIds(vector<int>{});
+    if (sinIds.estaVacia() == false) constructor = false;
+    if (sinIds.getCantidad() != 0) constructor = false;
+
+    // FIFO
+    cola.encolar(10);
+    if (cola.getCantidad() != 5) fifo = false;
+    int esperado[] = { 3, 5, 7, 9, 10 };
+    for (int i = 0; i < 5; i++) {
+        if (cola.getIdFrente() != esperado[i]) fifo = false;
+        if (cola.desencolar() == false) fifo = false;
+    }
+    if (cola.getCantidad() != 0) fifo = false;
+
+    // Buscar el ejercicio actual en la tabla hash
+    EjercicioCola cola2(idsLeccion);
+    Ejercicio* actual = cola2.getEjercicioActual(tabla);
+    if (actual == nullptr || actual->getIdEjercicio() != 3) buscar = false;
+    if (actual != nullptr && actual->getEnunciado() != "Enunciado 3") buscar = false;
+    cola2.desencolar();
+    actual = cola2.getEjercicioActual(tabla);
+    if (actual == nullptr || actual->getIdEjercicio() != 5) buscar = false;
+    if (actual != nullptr && actual != tabla.getEjercicio(5)) buscar = false; // es el mismo objeto de la tabla, no una copia
+
+    EjercicioCola inexistente(vector<int>{ 99 });
+    if (inexistente.getEjercicioActual(tabla) != nullptr) buscar = false;
+
+    // Vacia
+    cola2.vaciar();
+    if (cola2.estaVacia() == false) vacia = false;
+    if (cola2.getCantidad() != 0) vacia = false;
+    if (cola2.desencolar() == true) vacia = false;
+    if (cola2.getIdFrente() != -1) vacia = false;
+    if (cola2.getEjercicioActual(tabla) != nullptr) vacia = false;
+    cola2.encolar(1); // se puede reutilizar despues de vaciar
+    if (cola2.getIdFrente() != 1 || cola2.getCantidad() != 1) vacia = false;
+
+    // Reporte
+    cout << "\n========== REPORTE EJERCICIO COLA ==========\n";
+    cout << "Constructor: " << constructor << "\n";
+    cout << "FIFO: " << fifo << "\n";
+    cout << "Buscar: " << buscar << "\n";
+    cout << "Vacia: " << vacia << "\n";
+
+    int total = constructor + fifo + buscar + vacia;
+    cout << "\nTotal: " << total << "/4\n\n";
+}
+
 void ejecutarPruebas() {
     cout << "\tINICIO DE PRUEBAS\n\n";
     cout << "\nBST:\n";
@@ -353,5 +550,11 @@ void ejecutarPruebas() {
     probarCurso();
 	cout << "\nCurso AVL:\n";
 	probarCursoAVL();
+    cout << "\nEjercicio:\n";
+    probarEjercicio();
+    cout << "\nEjercicio Hash:\n";
+    probarEjercicioHash();
+    cout << "\nEjercicio Cola:\n";
+    probarEjercicioCola();
     cout << "\n\tFIN DE PRUEBAS\n";
 }

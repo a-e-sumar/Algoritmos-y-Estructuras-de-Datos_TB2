@@ -50,10 +50,16 @@ public:
 
     // Getters
     int getCantidad() { return cantidad; }
-    int getFrente() { //-1 si la cola esta vacia
+    int getIdFrente() { //-1 si la cola esta vacia
         if (frente == nullptr)
             return -1;
         return frente->idEjercicio;
+    }
+    //buscar en la tabla hash el ejercicio que toca resolver
+    Ejercicio* getEjercicioActual(EjercicioHashTable<Ejercicio>& ejercicios) {
+        if (frente == nullptr)
+			return nullptr; //null si la cola esta vacia
+        return ejercicios.getEjercicio(frente->idEjercicio);
     }
 
     // Metodos
