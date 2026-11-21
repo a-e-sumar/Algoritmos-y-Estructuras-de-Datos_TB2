@@ -70,26 +70,35 @@ int cantidadComplementosCursos() { return sizeof(complementosCursos) / sizeof(co
 
 string generarNombre() { return nombres[rand() % cantidadNombres()]; }
 string generarApellido() { return apellidos[rand() % cantidadApellidos()]; }
-string generarCorreo(string nombre, string apellido) { return nombre + apellido + "@universidad.edu.pe"; }
+string generarCorreo(string nombre, string apellido, int id) { return nombre.substr(0, 1) + apellido.substr(0, 1) + to_string(id) + "@universidad.edu.pe"; }
 
 string generarNombreCurso() { return nombresCursos[rand() % cantidadNombresCursos()] + " " + complementosCursos[rand() % cantidadComplementosCursos()]; }
 
 void generarProfesor(ProfesorBST<Profesor>& profesores) {
+    int insertados = 0;
+
     for (int i = 0; i < PROFESORES; i++)
     {
         int id = 10000 + i; // CORREGIR: si los ids son secuanciales el BST se vuelve desblanceado
         int idCurso = 30000 + i;
         string nombre = generarNombre();
         string apellido = generarApellido();
-        string correo = generarCorreo(nombre, apellido);
+        string correo = generarCorreo(nombre, apellido, id);
         string clave = "password123";
 
         Profesor newProfesor(id, nombre, apellido, correo, clave, idCurso);
-        profesores.insertar(newProfesor);
+        if (profesores.insertar(newProfesor)) insertados++;
+    }
+
+    if (insertados != PROFESORES) {
+        cout << "ADVERTENCIA: se insertaron " << insertados << " de " << PROFESORES << " profesores\n";
+        return;
     }
 }
 
 void generarEstudiante(EstudianteHashTable<Estudiante>& estudiantes, ProfesorBST<Profesor>& profesores) {
+    int insertados = 0;
+
     for (int i = 0; i < ESTUDIANTES; i++)
     {
         int id = 20000 + i;
@@ -99,16 +108,23 @@ void generarEstudiante(EstudianteHashTable<Estudiante>& estudiantes, ProfesorBST
         int idCurso = prof->getIdCurso();
         string nombre = generarNombre();
         string apellido = generarApellido();
-        string correo = generarCorreo(nombre, apellido);
+        string correo = generarCorreo(nombre, apellido, id);
         string clave = "password123";
-        int progresoCurso = rand() % 100; // Cambiar despues de implementar ProgresoHashTable
+        int progresoCurso = rand() % 101; // Cambiar despues de implementar ProgresoHashTable
 
         Estudiante newEstudiante(id, nombre, apellido, correo, clave, idProfesor, idCurso, progresoCurso);
-        estudiantes.insertar(newEstudiante);
+        if (estudiantes.insertar(newEstudiante)) insertados++;
+    }
+
+    if (insertados != ESTUDIANTES) {
+        cout << "ADVERTENCIA: se insertaron " << insertados << " de " << ESTUDIANTES << " estudiantes\n";
+        return;
     }
 }
 
 void generarCursos(CursoAVL<Curso>& cursos, ProfesorBST<Profesor>& profesores, EstudianteHashTable<Estudiante>& estudiantes) {
+    int insertados = 0;
+    
     for (int i = 0; i < CURSOS; i++)
     {
         vector<int> listaEstudiantes;
@@ -123,6 +139,11 @@ void generarCursos(CursoAVL<Curso>& cursos, ProfesorBST<Profesor>& profesores, E
         }
 
         Curso newCurso(idCurso, idProfesor, nombre, listaEstudiantes);
-        cursos.insertar(newCurso);
+        if (cursos.insertar(newCurso)) insertados++;
+    }
+
+    if (insertados != CURSOS) {
+        cout << "ADVERTENCIA: se insertaron " << insertados << " de " << CURSOS << " cursos\n";
+        return;
     }
 }
