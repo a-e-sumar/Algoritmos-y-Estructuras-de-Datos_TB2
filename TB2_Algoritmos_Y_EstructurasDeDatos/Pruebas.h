@@ -12,6 +12,8 @@
 #include "Ejercicio.h"
 #include "EjercicioHashTable.h"
 #include "EjercicioCola.h"
+#include "Modulo.h"
+#include "ModuloAVL.h"
 using namespace std;
 
 Profesor crearProfesor(int id, string nombre, int idCurso) {
@@ -24,6 +26,10 @@ Estudiante crearEstudiante(int id, string nombre, int idProf, int idCurso, int p
 
 Curso crearCurso(int id, string nombre, int idProf) {
     return Curso(id, idProf, nombre);
+}
+
+Modulo crearModulo(int id, string nombre, int idCurso) {
+    return Modulo(id, idCurso, nombre);
 }
 
 void probarBST() {
@@ -81,7 +87,7 @@ void probarBST() {
     // Reporte
     cout << "\n========== REPORTE BST ==========\n";
     cout << "Insertar: " << insertar << "\n";
-    cout << "Buscar: " << buscar<< "\n";
+    cout << "Buscar: " << buscar << "\n";
     cout << "Duplicado: " << duplicado << "\n";
     cout << "Eliminar: " << eliminar << "\n";
     cout << "Vaciar: " << vaciar << "\n";
@@ -179,7 +185,7 @@ void probarEstudiantes() {
     gestor.buscarEstudiante(100);
     gestor.buscarEstudiante(8);
 
-	delete tabla;
+    delete tabla;
 }
 
 void probarCurso() {
@@ -187,6 +193,7 @@ void probarCurso() {
     bool agregar = true;
     bool duplicado = true;
     bool eliminar = true;
+    bool modulos = true;
 
     Curso curso(1, 10, "Algoritmos");
 
@@ -214,15 +221,36 @@ void probarCurso() {
     if (curso.eliminarEstudiante(999) == true) eliminar = false;
     if (curso.getCantidadEstudiantes() != 2) eliminar = false;
 
+    // Modulos
+    if (curso.getCantidadModulos() != 0) modulos = false;
+    if (curso.agregarModulo(crearModulo(10, "Arreglos", 1)) == false) modulos = false;
+    if (curso.agregarModulo(crearModulo(20, "Listas", 1)) == false) modulos = false;
+    if (curso.agregarModulo(crearModulo(30, "Arboles", 1)) == false) modulos = false;
+    if (curso.getCantidadModulos() != 3) modulos = false;
+    if (curso.existeModulo(20) == false || curso.existeModulo(999) == true) modulos = false;
+    if (curso.getModulo(30) == nullptr || curso.getModulo(30)->getNombre() != "Arboles") modulos = false;
+    if (curso.agregarModulo(crearModulo(20, "Duplicado", 1)) == true) modulos = false; // ID repetido
+    if (curso.agregarModulo(crearModulo(40, "Otro curso", 2)) == true) modulos = false; // pertenece a otro curso
+    if (curso.getCantidadModulos() != 3) modulos = false;
+    if (curso.eliminarModulo(20) == false || curso.existeModulo(20) == true) modulos = false;
+    if (curso.eliminarModulo(999) == true) modulos = false;
+    if (curso.getCantidadModulos() != 2) modulos = false;
+
+    // Copia: el modulo de un curso copiado es independiente
+    Curso copiaCurso = curso;
+    copiaCurso.eliminarModulo(10);
+    if (curso.existeModulo(10) == false || copiaCurso.existeModulo(10) == true) modulos = false;
+
     // Reporte
     cout << "\n========== REPORTE CURSO ==========\n";
     cout << "Constructor: " << constructor << "\n";
     cout << "Agregar: " << agregar << "\n";
     cout << "Duplicado: " << duplicado << "\n";
     cout << "Eliminar: " << eliminar << "\n";
+    cout << "Modulos: " << modulos << "\n";
 
-    int total = constructor + agregar + duplicado + eliminar;
-    cout << "\nTotal: " << total << "/4\n\n";
+    int total = constructor + agregar + duplicado + eliminar + modulos;
+    cout << "\nTotal: " << total << "/5\n\n";
 }
 
 void probarCursoAVL() {
@@ -232,6 +260,7 @@ void probarCursoAVL() {
     bool rotaciones = true;
     bool eliminar = true;
     bool carga = true;
+    bool modulos = true;
     bool vaciar = true;
 
     // Insertar y rotaciones (LL, RR, LR, RL)
@@ -321,6 +350,33 @@ void probarCursoAVL() {
     if (masivo.estaBalanceado() == false) carga = false;
     if (masivo.getCurso(2) == nullptr || masivo.getCurso(3) != nullptr) carga = false;
 
+    // Modulos: CursoAVL copia cada Curso (con su ModuloAVL) al insertar, rotar y eliminar
+    CursoAVL<Curso> conModulos;
+    for (int c = 1; c <= 7; c++) { // IDs ascendentes: fuerza rotaciones
+        Curso curso = crearCurso(c * 10, "Curso" + to_string(c), c);
+        for (int m = 1; m <= 5; m++) {
+            if (curso.agregarModulo(crearModulo(c * 100 + m, "Modulo" + to_string(m), c * 10)) == false) modulos = false;
+        }
+        if (conModulos.insertar(curso) == false) modulos = false;
+        curso.agregarModulo(crearModulo(c * 100 + 9, "Extra", c * 10)); // el curso local es una copia
+        if (conModulos.getCurso(c * 10)->getCantidadModulos() != 5) modulos = false;
+    }
+    if (conModulos.getRotaciones() == 0) modulos = false;
+    for (int c = 1; c <= 7; c++) {
+        Curso* curso = conModulos.getCurso(c * 10);
+        if (curso == nullptr || curso->getCantidadModulos() != 5) { modulos = false; continue; }
+        if (curso->getModulo(c * 100 + 3) == nullptr) modulos = false;
+        if (curso->getModulos().estaBalanceado() == false) modulos = false;
+    }
+    if (conModulos.eliminar(40) == false) modulos = false; // raiz con dos hijos: copia el dato del sucesor
+    if (conModulos.eliminar(10) == false) modulos = false;
+    if (conModulos.getCurso(40) != nullptr) modulos = false;
+    for (int c = 2; c <= 7; c++) {
+        if (c == 4) continue;
+        Curso* curso = conModulos.getCurso(c * 10);
+        if (curso == nullptr || curso->getCantidadModulos() != 5 || curso->getModulo(c * 100 + 1) == nullptr) modulos = false;
+    }
+
     // Vaciar
     arbol.eliminar(40);
     arbol.eliminar(60);
@@ -338,10 +394,11 @@ void probarCursoAVL() {
     cout << "Rotaciones: " << rotaciones << "\n";
     cout << "Eliminar: " << eliminar << "\n";
     cout << "Carga: " << carga << "\n";
+    cout << "Modulos: " << modulos << "\n";
     cout << "Vaciar: " << vaciar << "\n";
 
-    int total = insertar + buscar + duplicado + rotaciones + eliminar + carga + vaciar;
-    cout << "\nTotal: " << total << "/7\n\n";
+    int total = insertar + buscar + duplicado + rotaciones + eliminar + carga + modulos + vaciar;
+    cout << "\nTotal: " << total << "/8\n\n";
 }
 
 Ejercicio crearEjercicio(int id, int idLeccion) {
@@ -538,6 +595,202 @@ void probarEjercicioCola() {
     cout << "\nTotal: " << total << "/4\n\n";
 }
 
+void probarModulo() {
+    bool constructor = true;
+    bool setters = true;
+    bool evaluacion = true;
+
+    // Constructor
+    Modulo vacio;
+    if (vacio.getIdModulo() != 0) constructor = false;
+    if (vacio.getIdCurso() != 0) constructor = false;
+    if (vacio.getNombre() != "") constructor = false;
+    if (vacio.getEvaluacion().getIdEvaluacion() != 0) constructor = false;
+
+    Modulo modulo(5, 2, "Arreglos");
+    if (modulo.getIdModulo() != 5) constructor = false;
+    if (modulo.getIdCurso() != 2) constructor = false;
+    if (modulo.getNombre() != "Arreglos") constructor = false;
+    if (modulo.getEvaluacion().getIdEvaluacion() != 0) constructor = false; // sin evaluacion por defecto
+
+    // Setters
+    modulo.setIdModulo(6);
+    modulo.setIdCurso(3);
+    modulo.setNombre("Listas");
+    if (modulo.getIdModulo() != 6) setters = false;
+    if (modulo.getIdCurso() != 3) setters = false;
+    if (modulo.getNombre() != "Listas") setters = false;
+
+    // Evaluacion
+    Evaluacion examen(50, 6, "Pregunta 1", "Pregunta 2", "R1", "R2");
+    Modulo conExamen(6, 3, "Listas", examen);
+    if (conExamen.getEvaluacion().getIdEvaluacion() != 50) evaluacion = false;
+    if (conExamen.getEvaluacion().getIdModulo() != 6) evaluacion = false;
+    if (conExamen.getEvaluacion().getPregunta1() != "Pregunta 1") evaluacion = false;
+
+    modulo.setEvaluacion(examen);
+    if (modulo.getEvaluacion().getIdEvaluacion() != 50) evaluacion = false;
+
+    modulo.getEvaluacion().setRespuesta1("Nueva"); // getEvaluacion devuelve referencia: modifica la del modulo
+    if (modulo.getEvaluacion().getRespuesta1() != "Nueva") evaluacion = false;
+    if (examen.getRespuesta1() != "R1") evaluacion = false; // la original no cambia (se copio)
+
+    // Reporte
+    cout << "\n========== REPORTE MODULO ==========\n";
+    cout << "Constructor: " << constructor << "\n";
+    cout << "Setters: " << setters << "\n";
+    cout << "Evaluacion: " << evaluacion << "\n";
+
+    int total = constructor + setters + evaluacion;
+    cout << "\nTotal: " << total << "/3\n\n";
+}
+
+void probarModuloAVL() {
+    bool insertar = true;
+    bool buscar = true;
+    bool duplicado = true;
+    bool rotaciones = true;
+    bool eliminar = true;
+    bool carga = true;
+    bool copia = true;
+    bool vaciar = true;
+
+    // Insertar y rotaciones (LL, RR, LR, RL)
+    ModuloAVL<Modulo> ll;
+    ll.insertar(crearModulo(30, "A", 1));
+    ll.insertar(crearModulo(20, "B", 1));
+    ll.insertar(crearModulo(10, "C", 1)); // LL
+    if (ll.getRaiz()->dato.getIdModulo() != 20) rotaciones = false;
+
+    ModuloAVL<Modulo> rr;
+    rr.insertar(crearModulo(10, "A", 1));
+    rr.insertar(crearModulo(20, "B", 1));
+    rr.insertar(crearModulo(30, "C", 1)); // RR
+    if (rr.getRaiz()->dato.getIdModulo() != 20) rotaciones = false;
+
+    ModuloAVL<Modulo> lr;
+    lr.insertar(crearModulo(30, "A", 1));
+    lr.insertar(crearModulo(10, "B", 1));
+    lr.insertar(crearModulo(20, "C", 1)); // LR
+    if (lr.getRaiz()->dato.getIdModulo() != 20) rotaciones = false;
+    if (lr.getRotaciones() != 2) rotaciones = false;
+
+    ModuloAVL<Modulo> rl;
+    rl.insertar(crearModulo(10, "A", 1));
+    rl.insertar(crearModulo(30, "B", 1));
+    rl.insertar(crearModulo(20, "C", 1)); // RL
+    if (rl.getRaiz()->dato.getIdModulo() != 20) rotaciones = false;
+    if (rl.getRotaciones() != 2) rotaciones = false;
+
+    ModuloAVL<Modulo> arbol;
+    int ids[] = { 50, 30, 70, 20, 40, 60, 80 };
+    for (int i = 0; i < 7; i++) {
+        if (arbol.insertar(crearModulo(ids[i], "Modulo" + to_string(ids[i]), 1)) == false) insertar = false;
+    }
+    if (arbol.contarModulos() != 7) insertar = false;
+    if (arbol.getAltura() != 2) insertar = false;
+    if (arbol.estaBalanceado() == false) insertar = false;
+
+    // Buscar
+    if (arbol.getModulo(50) == nullptr) buscar = false;
+    if (arbol.getModulo(20) == nullptr) buscar = false;
+    if (arbol.getModulo(80) == nullptr) buscar = false;
+    if (arbol.getModulo(1000) != nullptr) buscar = false;
+    if (arbol.getModulo(1) != nullptr) buscar = false;
+    if (arbol.getModulo(40) != nullptr && arbol.getModulo(40)->getNombre() != "Modulo40") buscar = false;
+
+    // Duplicado
+    if (arbol.insertar(crearModulo(50, "Duplicado", 1)) == true) duplicado = false;
+    if (arbol.contarModulos() != 7) duplicado = false;
+    if (arbol.getModulo(50)->getNombre() == "Duplicado") duplicado = false;
+
+    // Copia profunda (constructor de copia y asignacion)
+    ModuloAVL<Modulo> copiaArbol(arbol);
+    if (copiaArbol.contarModulos() != 7) copia = false;
+    if (copiaArbol.getAltura() != arbol.getAltura()) copia = false;
+    if (copiaArbol.estaBalanceado() == false) copia = false;
+    if (copiaArbol.getRaiz() == arbol.getRaiz()) copia = false; // no comparten nodos
+    copiaArbol.getModulo(40)->setNombre("Cambiado");
+    if (arbol.getModulo(40)->getNombre() != "Modulo40") copia = false; // modificar la copia no afecta al original
+    copiaArbol.eliminar(40);
+    if (arbol.getModulo(40) == nullptr) copia = false;
+    if (arbol.contarModulos() != 7) copia = false;
+
+    ModuloAVL<Modulo> asignado;
+    asignado.insertar(crearModulo(1, "Previo", 1));
+    asignado = arbol;
+    if (asignado.contarModulos() != 7) copia = false; // reemplaza lo que tenia
+    if (asignado.getModulo(1) != nullptr) copia = false;
+    asignado = asignado; // autoasignacion no debe romper nada
+    if (asignado.contarModulos() != 7) copia = false;
+
+    vector<ModuloAVL<Modulo>> lista; // las copias al agregar a un vector no deben liberar dos veces los nodos
+    lista.push_back(arbol);
+    lista.push_back(asignado);
+    if (lista[0].contarModulos() != 7 || lista[1].contarModulos() != 7) copia = false;
+
+    // Eliminar (hoja, un hijo, dos hijos, raiz, inexistente)
+    if (arbol.eliminar(20) == false) eliminar = false;
+    if (arbol.getModulo(20) != nullptr) eliminar = false;
+    if (arbol.eliminar(30) == false) eliminar = false;
+    if (arbol.getModulo(30) != nullptr) eliminar = false;
+    if (arbol.eliminar(50) == false) eliminar = false;
+    if (arbol.getModulo(50) != nullptr) eliminar = false;
+    if (arbol.eliminar(1000) == true) eliminar = false;
+    if (arbol.contarModulos() != 4) eliminar = false;
+    if (arbol.estaBalanceado() == false) eliminar = false;
+
+    // Eliminar que fuerza rotacion: 10 -> 5, 20, 3 y se quita 20 (LL)
+    ModuloAVL<Modulo> forzado;
+    int forz[] = { 10, 5, 20, 3 };
+    for (int i = 0; i < 4; i++) forzado.insertar(crearModulo(forz[i], "F", 1));
+    int antes = forzado.getRotaciones();
+    forzado.eliminar(20);
+    if (forzado.getRotaciones() != antes + 1) eliminar = false;
+    if (forzado.estaBalanceado() == false) eliminar = false;
+    if (forzado.getRaiz()->dato.getIdModulo() != 5) eliminar = false;
+
+    // Carga: 100 modulos en orden ascendente (peor caso de un BST)
+    ModuloAVL<Modulo> grande;
+    for (int i = 1; i <= 100; i++) {
+        if (grande.insertar(crearModulo(i, "Modulo" + to_string(i), 1)) == false) carga = false;
+    }
+    if (grande.contarModulos() != 100) carga = false;
+    if (grande.getAltura() > 7) carga = false; // un BST sin balancear tendria altura 99
+    if (grande.estaBalanceado() == false) carga = false;
+
+    // Carga: 1000 modulos y se eliminan 500
+    ModuloAVL<Modulo> masivo;
+    for (int i = 1; i <= 1000; i++) masivo.insertar(crearModulo(i, "M", 1));
+    for (int i = 1; i <= 1000; i += 2) masivo.eliminar(i);
+    if (masivo.contarModulos() != 500) carga = false;
+    if (masivo.estaBalanceado() == false) carga = false;
+    if (masivo.getModulo(2) == nullptr || masivo.getModulo(3) != nullptr) carga = false;
+
+    // Vaciar
+    arbol.eliminar(40);
+    arbol.eliminar(60);
+    arbol.eliminar(70);
+    arbol.eliminar(80);
+    if (arbol.getRaiz() != nullptr) vaciar = false;
+    if (arbol.contarModulos() != 0) vaciar = false;
+    if (arbol.getAltura() != -1) vaciar = false;
+
+    // Reporte
+    cout << "\n========== REPORTE MODULO AVL ==========\n";
+    cout << "Insertar: " << insertar << "\n";
+    cout << "Buscar: " << buscar << "\n";
+    cout << "Duplicado: " << duplicado << "\n";
+    cout << "Rotaciones: " << rotaciones << "\n";
+    cout << "Copia: " << copia << "\n";
+    cout << "Eliminar: " << eliminar << "\n";
+    cout << "Carga: " << carga << "\n";
+    cout << "Vaciar: " << vaciar << "\n";
+
+    int total = insertar + buscar + duplicado + rotaciones + copia + eliminar + carga + vaciar;
+    cout << "\nTotal: " << total << "/8\n\n";
+}
+
 void ejecutarPruebas() {
     cout << "\tINICIO DE PRUEBAS\n\n";
     cout << "\nBST:\n";
@@ -548,13 +801,17 @@ void ejecutarPruebas() {
     probarEstudiantes();
     cout << "\nCurso:\n";
     probarCurso();
-	cout << "\nCurso AVL:\n";
-	probarCursoAVL();
+    cout << "\nCurso AVL:\n";
+    probarCursoAVL();
     cout << "\nEjercicio:\n";
     probarEjercicio();
     cout << "\nEjercicio Hash:\n";
     probarEjercicioHash();
     cout << "\nEjercicio Cola:\n";
     probarEjercicioCola();
+    cout << "\nModulo:\n";
+    probarModulo();
+    cout << "\nModulo AVL:\n";
+    probarModuloAVL();
     cout << "\n\tFIN DE PRUEBAS\n";
 }
