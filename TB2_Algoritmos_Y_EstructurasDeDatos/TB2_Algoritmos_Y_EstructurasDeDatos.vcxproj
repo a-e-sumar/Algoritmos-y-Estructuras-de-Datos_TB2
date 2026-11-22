@@ -152,6 +152,8 @@
     <ClInclude Include="EstudianteHashTable.h" />
     <ClInclude Include="Evaluacion.h" />
     <ClInclude Include="Generador.h" />
+    <ClInclude Include="HistorialEjercicio.h" />
+    <ClInclude Include="HistorialEvaluacion.h" />
     <ClInclude Include="Leccion.h" />
     <ClInclude Include="LeccionListaDoble.h" />
     <ClInclude Include="Modulo.h" />

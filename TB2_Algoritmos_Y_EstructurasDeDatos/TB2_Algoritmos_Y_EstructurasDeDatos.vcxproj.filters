@@ -65,6 +65,24 @@
     <ClInclude Include="Ejercicio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Leccion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LeccionListaDoble.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Modulo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuloAVL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HistorialEjercicio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HistorialEvaluacion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="TB2_Algoritmos_Y_EstructurasDeDatos.slnx" />
