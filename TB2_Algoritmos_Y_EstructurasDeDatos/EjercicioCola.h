@@ -5,26 +5,25 @@
 #include "EjercicioHashTable.h"
 using namespace std;
 
+template<typename T>
 struct NodoEjercicioCola {
-    int idEjercicio;
-    NodoEjercicioCola* siguiente;
+    T dato;
+    NodoEjercicioCola<T>* siguiente;
 
-    NodoEjercicioCola(int pidEjercicio) {
-        idEjercicio = pidEjercicio;
+    NodoEjercicioCola(T valor) {
+        dato = valor;
         siguiente = nullptr;
     }
 };
 
 //cola temporal: se crea cuando el estudiante entra a una leccion
+template<typename T>
 class EjercicioCola
 {
 private:
-    NodoEjercicioCola* frente;
-    NodoEjercicioCola* fin;
+    NodoEjercicioCola<T>* frente;
+    NodoEjercicioCola<T>* fin;
     int cantidad;
-
-	EjercicioCola(const EjercicioCola&) = delete;
-	EjercicioCola& operator=(const EjercicioCola&) = delete;
 
 public:
     EjercicioCola() {
@@ -35,7 +34,7 @@ public:
     //pidsEjercicios: vector<int> de la Leccion
     //agregar despues de implementar HistorialEjercicio
     //para filtar los IDs de los ejercicios que ya estan completados
-    EjercicioCola(const vector<int>& pidsEjercicios) {
+    EjercicioCola(const vector<T>& pidsEjercicios) {
         frente = nullptr;
         fin = nullptr;
         cantidad = 0;
@@ -50,24 +49,24 @@ public:
 
     // Getters
     int getCantidad() { return cantidad; }
-    int getIdFrente() { //-1 si la cola esta vacia
+    T* getFrente() { //nullptr si la cola esta vacia
         if (frente == nullptr)
-            return -1;
-        return frente->idEjercicio;
+            return nullptr;
+        return &frente->dato;
     }
-    //buscar en la tabla hash el ejercicio que toca resolver
+    //buscar en la tabla hash el ejercicio que toca resolver (solo para EjercicioCola<int>)
     Ejercicio* getEjercicioActual(EjercicioHashTable<Ejercicio>& ejercicios) {
         if (frente == nullptr)
-			return nullptr; //null si la cola esta vacia
-        return ejercicios.getEjercicio(frente->idEjercicio);
+            return nullptr; //null si la cola esta vacia
+        return ejercicios.getEjercicio(frente->dato);
     }
 
     // Metodos
     bool estaVacia() {
         return frente == nullptr;
     }
-    void encolar(int pidEjercicio) {
-        NodoEjercicioCola* nuevo = new NodoEjercicioCola(pidEjercicio);
+    void encolar(T pdato) {
+        NodoEjercicioCola<T>* nuevo = new NodoEjercicioCola<T>(pdato);
         if (frente == nullptr) {
             frente = nuevo;
             fin = nuevo;
@@ -82,7 +81,7 @@ public:
         if (frente == nullptr) {
             return false;
         }
-        NodoEjercicioCola* temporal = frente;
+        NodoEjercicioCola<T>* temporal = frente;
         frente = frente->siguiente;
         if (frente == nullptr) {
             fin = nullptr;
@@ -98,9 +97,9 @@ public:
     }
     void mostrarCola() {
         cout << "\n=== Ejercicios pendientes: " << cantidad << " ===\n";
-        NodoEjercicioCola* actual = frente;
+        NodoEjercicioCola<T>* actual = frente;
         while (actual != nullptr) {
-            cout << actual->idEjercicio << " ";
+            cout << actual->dato << " ";
             actual = actual->siguiente;
         }
         cout << endl;

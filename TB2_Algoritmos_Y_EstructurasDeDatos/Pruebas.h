@@ -541,38 +541,49 @@ void probarEjercicioHash() {
     cout << "\nTotal: " << total << "/6\n\n";
 }
 
+// Las colas y tablas siempre se pasan por referencia (no se copian)
+void resolverEjercicios(EjercicioCola<int>& cola, int cuantos) {
+    for (int i = 0; i < cuantos; i++) cola.desencolar();
+}
+
 void probarEjercicioCola() {
     bool constructor = true;
     bool fifo = true;
     bool buscar = true;
     bool vacia = true;
+    bool generica = true;
+    bool referencia = true;
 
     EjercicioHashTable<Ejercicio> tabla;
     for (int i = 1; i <= 10; i++) tabla.insertar(crearEjercicio(i, 1));
 
     // Constructor (IDs de una leccion)
     vector<int> idsLeccion = { 3, 5, 7, 9 };
-    EjercicioCola cola(idsLeccion);
+    EjercicioCola<int> cola(idsLeccion);
     if (cola.getCantidad() != 4) constructor = false;
     if (cola.estaVacia() == true) constructor = false;
-    if (cola.getIdFrente() != 3) constructor = false;
+    if (cola.getFrente() == nullptr || *cola.getFrente() != 3) constructor = false;
 
-    EjercicioCola sinIds(vector<int>{});
+    EjercicioCola<int> sinIds(vector<int>{});
     if (sinIds.estaVacia() == false) constructor = false;
     if (sinIds.getCantidad() != 0) constructor = false;
+    if (sinIds.getFrente() != nullptr) constructor = false;
+
+    EjercicioCola<int> porDefecto;
+    if (porDefecto.estaVacia() == false || porDefecto.getCantidad() != 0) constructor = false;
 
     // FIFO
     cola.encolar(10);
     if (cola.getCantidad() != 5) fifo = false;
     int esperado[] = { 3, 5, 7, 9, 10 };
     for (int i = 0; i < 5; i++) {
-        if (cola.getIdFrente() != esperado[i]) fifo = false;
+        if (cola.getFrente() == nullptr || *cola.getFrente() != esperado[i]) fifo = false;
         if (cola.desencolar() == false) fifo = false;
     }
     if (cola.getCantidad() != 0) fifo = false;
 
     // Buscar el ejercicio actual en la tabla hash
-    EjercicioCola cola2(idsLeccion);
+    EjercicioCola<int> cola2(idsLeccion);
     Ejercicio* actual = cola2.getEjercicioActual(tabla);
     if (actual == nullptr || actual->getIdEjercicio() != 3) buscar = false;
     if (actual != nullptr && actual->getEnunciado() != "Enunciado 3") buscar = false;
@@ -581,7 +592,7 @@ void probarEjercicioCola() {
     if (actual == nullptr || actual->getIdEjercicio() != 5) buscar = false;
     if (actual != nullptr && actual != tabla.getEjercicio(5)) buscar = false; // es el mismo objeto de la tabla, no una copia
 
-    EjercicioCola inexistente(vector<int>{ 99 });
+    EjercicioCola<int> inexistente(vector<int>{ 99 });
     if (inexistente.getEjercicioActual(tabla) != nullptr) buscar = false;
 
     // Vacia
@@ -589,10 +600,28 @@ void probarEjercicioCola() {
     if (cola2.estaVacia() == false) vacia = false;
     if (cola2.getCantidad() != 0) vacia = false;
     if (cola2.desencolar() == true) vacia = false;
-    if (cola2.getIdFrente() != -1) vacia = false;
+    if (cola2.getFrente() != nullptr) vacia = false;
     if (cola2.getEjercicioActual(tabla) != nullptr) vacia = false;
     cola2.encolar(1); // se puede reutilizar despues de vaciar
-    if (cola2.getIdFrente() != 1 || cola2.getCantidad() != 1) vacia = false;
+    if (cola2.getFrente() == nullptr || *cola2.getFrente() != 1 || cola2.getCantidad() != 1) vacia = false;
+
+    // Generica: tambien funciona con otros tipos de dato
+    EjercicioCola<string> palabras(vector<string>{ "uno", "dos" });
+    palabras.encolar("tres");
+    if (palabras.getCantidad() != 3) generica = false;
+    if (palabras.getFrente() == nullptr || *palabras.getFrente() != "uno") generica = false;
+    palabras.desencolar();
+    if (*palabras.getFrente() != "dos") generica = false;
+    palabras.vaciar();
+    if (palabras.estaVacia() == false || palabras.getFrente() != nullptr) generica = false;
+
+    // Referencia: la funcion modifica la misma cola, no una copia
+    EjercicioCola<int> pendientes(idsLeccion);
+    resolverEjercicios(pendientes, 2);
+    if (pendientes.getCantidad() != 2) referencia = false;
+    if (pendientes.getFrente() == nullptr || *pendientes.getFrente() != 7) referencia = false;
+    resolverEjercicios(pendientes, 5); // desencolar de mas no rompe nada
+    if (pendientes.estaVacia() == false) referencia = false;
 
     // Reporte
     cout << "\n========== REPORTE EJERCICIO COLA ==========\n";
@@ -600,9 +629,11 @@ void probarEjercicioCola() {
     cout << "FIFO: " << fifo << "\n";
     cout << "Buscar: " << buscar << "\n";
     cout << "Vacia: " << vacia << "\n";
+    cout << "Generica: " << generica << "\n";
+    cout << "Referencia: " << referencia << "\n";
 
-    int total = constructor + fifo + buscar + vacia;
-    cout << "\nTotal: " << total << "/4\n\n";
+    int total = constructor + fifo + buscar + vacia + generica + referencia;
+    cout << "\nTotal: " << total << "/6\n\n";
 }
 
 void probarModulo() {

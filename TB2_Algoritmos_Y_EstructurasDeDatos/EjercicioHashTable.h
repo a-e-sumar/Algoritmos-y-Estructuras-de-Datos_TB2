@@ -48,10 +48,6 @@ private:
         return nullptr;
     }
 
-    // La tabla es unica y global, no se copia
-    EjercicioHashTable(const EjercicioHashTable&) = delete;
-    EjercicioHashTable& operator=(const EjercicioHashTable&) = delete;
-
 public:
     EjercicioHashTable() {
         for (int i = 0; i < TAM_EJERCICIOS; i++) {
