@@ -2,8 +2,6 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "Modulo.h"
-#include "ModuloAVL.h"
 using namespace std;
 
 class Curso
@@ -13,7 +11,7 @@ private:
 	int idProfesor;
 	string nombre;
 	vector<int> idsEstudiantes; //guarda id de estudiantes inscritos en el curso
-	ModuloAVL<Modulo> modulos; //modulos del curso por su id
+	vector<int> idsModulos; //guarda id de modulos del curso (los modulos viven en el ModuloAVL global)
 
 public:
 	Curso() {
@@ -29,21 +27,29 @@ public:
 		idsEstudiantes = pidsEstudiantes;
 	}
 
+	Curso(int pidCurso, int pidProfesor, string pnombre, vector<int> pidsEstudiantes, vector<int> pidsModulos) {
+		idCurso = pidCurso;
+		idProfesor = pidProfesor;
+		nombre = pnombre;
+		idsEstudiantes = pidsEstudiantes;
+		idsModulos = pidsModulos;
+	}
+
 	// Getters
 	int getIdCurso() { return idCurso; }
 	int getIdProfesor() { return idProfesor; }
 	string getNombre() { return nombre; }
 	const vector<int>& getIdsEstudiantes() { return idsEstudiantes; }
 	int getCantidadEstudiantes() { return (int)idsEstudiantes.size(); }
-	ModuloAVL<Modulo>& getModulos() { return modulos; }
-	Modulo* getModulo(int idModulo) { return modulos.getModulo(idModulo); }
-	int getCantidadModulos() { return modulos.contarModulos(); }
+	const vector<int>& getIdsModulos() { return idsModulos; }
+	int getCantidadModulos() { return (int)idsModulos.size(); }
 
 	// Setters
 	void setIdCurso(int pidCurso) { idCurso = pidCurso; }
 	void setIdProfesor(int pidProfesor) { idProfesor = pidProfesor; }
 	void setNombre(string pnombre) { nombre = pnombre; }
 	void setIdsEstudiantes(vector<int> pidsEstudiantes) { idsEstudiantes = pidsEstudiantes; }
+	void setIdsModulos(vector<int> pidsModulos) { idsModulos = pidsModulos; }
 
 	// Metodos
 	bool existeEstudiante(int idEstudiante) { // Verifica si esta inscrito en el curso
@@ -74,19 +80,31 @@ public:
 	}
 
 	bool existeModulo(int idModulo) { // Verifica si el modulo pertenece al curso
-		return modulos.getModulo(idModulo) != nullptr;
+		for (size_t i = 0; i < idsModulos.size(); i++) {
+			if (idsModulos[i] == idModulo) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	//solo se usa para cargar o generar datos, los profesores NO modifican el contenido
-	bool agregarModulo(Modulo modulo) { // Agrega un modulo al curso
-		if (modulo.getIdCurso() != idCurso) {
-			return false;
+	bool agregarModulo(int idModulo) { // Agrega el id de un modulo al curso
+		if (!existeModulo(idModulo)) {
+			idsModulos.push_back(idModulo);
+			return true;
 		}
-		return modulos.insertar(modulo);
+		return false;
 	}
 
-	bool eliminarModulo(int idModulo) { // Elimina un modulo del curso
-		return modulos.eliminar(idModulo);
+	bool eliminarModulo(int idModulo) { // Elimina el id de un modulo del curso
+		for (size_t i = 0; i < idsModulos.size(); i++) {
+			if (idsModulos[i] == idModulo) {
+				idsModulos.erase(idsModulos.begin() + i);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	void mostrarCurso() {
@@ -95,6 +113,6 @@ public:
 		cout << "Nombre: " << nombre << endl;
 		cout << "ID Profesor: " << idProfesor << endl;
 		cout << "Cantidad de estudiantes: " << idsEstudiantes.size() << endl;
-		cout << "Cantidad de modulos: " << modulos.contarModulos() << endl;
+		cout << "Cantidad de modulos: " << idsModulos.size() << endl;
 	}
 };

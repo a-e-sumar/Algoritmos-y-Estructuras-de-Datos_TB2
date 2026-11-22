@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <vector>
 using namespace std;
 
 template<typename T>
@@ -214,34 +215,23 @@ private:
         liberar(nodo->derecha);
         delete nodo;
     }
-    // Copia profunda de un subarbol (mantiene alturas y estructura)
-    NodoModulo<T>* copiar(NodoModulo<T>* nodo) {
-        if (nodo == nullptr)
-            return nullptr;
-        NodoModulo<T>* nuevo = new NodoModulo<T>(nodo->dato);
-        nuevo->altura = nodo->altura;
-        nuevo->izquierda = copiar(nodo->izquierda);
-        nuevo->derecha = copiar(nodo->derecha);
-        return nuevo;
-    }
 
 public:
     ModuloAVL() {
         raiz = nullptr;
         rotaciones = 0;
     }
-    // Constructor de copia y asignacion (para qeu no se libere dos veces el mismo nodo)
-    ModuloAVL(const ModuloAVL<T>& otro) {
-        raiz = copiar(otro.raiz);
-        rotaciones = otro.rotaciones;
-    }
-    ModuloAVL<T>& operator=(const ModuloAVL<T>& otro) {
-        if (this != &otro) {
-            liberar(raiz);
-            raiz = copiar(otro.raiz);
-            rotaciones = otro.rotaciones;
+    // Arbol temporal de un curso: se arma desde sus ids (pidsModulos) buscando cada modulo en el arbol global
+    // Guarda copias de los modulos; el arbol global no se modifica
+    ModuloAVL(const vector<int>& pidsModulos, ModuloAVL<T>& global) {
+        raiz = nullptr;
+        rotaciones = 0;
+        for (size_t i = 0; i < pidsModulos.size(); i++) {
+            T* modulo = global.getModulo(pidsModulos[i]);
+            if (modulo != nullptr) {
+                insertar(*modulo);
+            }
         }
-        return *this;
     }
     ~ModuloAVL() {
         liberar(raiz);

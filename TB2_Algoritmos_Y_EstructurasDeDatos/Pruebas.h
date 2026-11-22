@@ -221,25 +221,32 @@ void probarCurso() {
     if (curso.eliminarEstudiante(999) == true) eliminar = false;
     if (curso.getCantidadEstudiantes() != 2) eliminar = false;
 
-    // Modulos
+    // Modulos (el curso solo guarda los ids)
     if (curso.getCantidadModulos() != 0) modulos = false;
-    if (curso.agregarModulo(crearModulo(10, "Arreglos", 1)) == false) modulos = false;
-    if (curso.agregarModulo(crearModulo(20, "Listas", 1)) == false) modulos = false;
-    if (curso.agregarModulo(crearModulo(30, "Arboles", 1)) == false) modulos = false;
+    if (curso.getIdsModulos().empty() == false) modulos = false;
+    if (curso.agregarModulo(10) == false) modulos = false;
+    if (curso.agregarModulo(20) == false) modulos = false;
+    if (curso.agregarModulo(30) == false) modulos = false;
     if (curso.getCantidadModulos() != 3) modulos = false;
     if (curso.existeModulo(20) == false || curso.existeModulo(999) == true) modulos = false;
-    if (curso.getModulo(30) == nullptr || curso.getModulo(30)->getNombre() != "Arboles") modulos = false;
-    if (curso.agregarModulo(crearModulo(20, "Duplicado", 1)) == true) modulos = false; // ID repetido
-    if (curso.agregarModulo(crearModulo(40, "Otro curso", 2)) == true) modulos = false; // pertenece a otro curso
+    if (curso.getIdsModulos()[0] != 10 || curso.getIdsModulos()[2] != 30) modulos = false; // conserva el orden
+    if (curso.agregarModulo(20) == true) modulos = false; // ID repetido
     if (curso.getCantidadModulos() != 3) modulos = false;
     if (curso.eliminarModulo(20) == false || curso.existeModulo(20) == true) modulos = false;
     if (curso.eliminarModulo(999) == true) modulos = false;
     if (curso.getCantidadModulos() != 2) modulos = false;
+    if (curso.getIdsModulos()[0] != 10 || curso.getIdsModulos()[1] != 30) modulos = false;
 
-    // Copia: el modulo de un curso copiado es independiente
-    Curso copiaCurso = curso;
-    copiaCurso.eliminarModulo(10);
-    if (curso.existeModulo(10) == false || copiaCurso.existeModulo(10) == true) modulos = false;
+    // Constructor con ids de estudiantes y de modulos
+    Curso conIds(2, 11, "Listas", { 1, 2 }, { 5, 6, 7 });
+    if (conIds.getCantidadEstudiantes() != 2 || conIds.getCantidadModulos() != 3) modulos = false;
+    if (conIds.existeModulo(6) == false) modulos = false;
+    Curso soloEstudiantes(3, 12, "Arboles", { 9 }); // el constructor anterior sigue funcionando
+    if (soloEstudiantes.getCantidadEstudiantes() != 1 || soloEstudiantes.getCantidadModulos() != 0) modulos = false;
+
+    // Setter
+    conIds.setIdsModulos({ 8, 9 });
+    if (conIds.getCantidadModulos() != 2 || conIds.existeModulo(5) == true || conIds.existeModulo(8) == false) modulos = false;
 
     // Reporte
     cout << "\n========== REPORTE CURSO ==========\n";
@@ -350,31 +357,34 @@ void probarCursoAVL() {
     if (masivo.estaBalanceado() == false) carga = false;
     if (masivo.getCurso(2) == nullptr || masivo.getCurso(3) != nullptr) carga = false;
 
-    // Modulos: CursoAVL copia cada Curso (con su ModuloAVL) al insertar, rotar y eliminar
+    // Modulos: CursoAVL copia cada Curso (con su vector de ids) al insertar, rotar y eliminar
     CursoAVL<Curso> conModulos;
     for (int c = 1; c <= 7; c++) { // IDs ascendentes: fuerza rotaciones
         Curso curso = crearCurso(c * 10, "Curso" + to_string(c), c);
         for (int m = 1; m <= 5; m++) {
-            if (curso.agregarModulo(crearModulo(c * 100 + m, "Modulo" + to_string(m), c * 10)) == false) modulos = false;
+            if (curso.agregarModulo(c * 100 + m) == false) modulos = false;
         }
         if (conModulos.insertar(curso) == false) modulos = false;
-        curso.agregarModulo(crearModulo(c * 100 + 9, "Extra", c * 10)); // el curso local es una copia
+        curso.agregarModulo(c * 100 + 9); // el curso local es una copia
         if (conModulos.getCurso(c * 10)->getCantidadModulos() != 5) modulos = false;
     }
     if (conModulos.getRotaciones() == 0) modulos = false;
     for (int c = 1; c <= 7; c++) {
         Curso* curso = conModulos.getCurso(c * 10);
         if (curso == nullptr || curso->getCantidadModulos() != 5) { modulos = false; continue; }
-        if (curso->getModulo(c * 100 + 3) == nullptr) modulos = false;
-        if (curso->getModulos().estaBalanceado() == false) modulos = false;
+        if (curso->existeModulo(c * 100 + 3) == false) modulos = false;
+        if (curso->existeModulo(c * 100 + 9) == true) modulos = false;
     }
+    conModulos.getCurso(20)->agregarModulo(299); // se modifica el curso que esta dentro del arbol
+    if (conModulos.getCurso(20)->getCantidadModulos() != 6) modulos = false;
     if (conModulos.eliminar(40) == false) modulos = false; // raiz con dos hijos: copia el dato del sucesor
     if (conModulos.eliminar(10) == false) modulos = false;
     if (conModulos.getCurso(40) != nullptr) modulos = false;
     for (int c = 2; c <= 7; c++) {
         if (c == 4) continue;
         Curso* curso = conModulos.getCurso(c * 10);
-        if (curso == nullptr || curso->getCantidadModulos() != 5 || curso->getModulo(c * 100 + 1) == nullptr) modulos = false;
+        int esperados = (c == 2) ? 6 : 5;
+        if (curso == nullptr || curso->getCantidadModulos() != esperados || curso->existeModulo(c * 100 + 1) == false) modulos = false;
     }
 
     // Vaciar
@@ -599,6 +609,7 @@ void probarModulo() {
     bool constructor = true;
     bool setters = true;
     bool evaluacion = true;
+    bool lecciones = true;
 
     // Constructor
     Modulo vacio;
@@ -606,12 +617,14 @@ void probarModulo() {
     if (vacio.getIdCurso() != 0) constructor = false;
     if (vacio.getNombre() != "") constructor = false;
     if (vacio.getEvaluacion().getIdEvaluacion() != 0) constructor = false;
+    if (vacio.getCantidadLecciones() != 0) constructor = false;
 
     Modulo modulo(5, 2, "Arreglos");
     if (modulo.getIdModulo() != 5) constructor = false;
     if (modulo.getIdCurso() != 2) constructor = false;
     if (modulo.getNombre() != "Arreglos") constructor = false;
     if (modulo.getEvaluacion().getIdEvaluacion() != 0) constructor = false; // sin evaluacion por defecto
+    if (modulo.getCantidadLecciones() != 0) constructor = false;
 
     // Setters
     modulo.setIdModulo(6);
@@ -635,14 +648,38 @@ void probarModulo() {
     if (modulo.getEvaluacion().getRespuesta1() != "Nueva") evaluacion = false;
     if (examen.getRespuesta1() != "R1") evaluacion = false; // la original no cambia (se copio)
 
+    // Lecciones (el modulo solo guarda los ids)
+    if (modulo.agregarLeccion(100) == false) lecciones = false;
+    if (modulo.agregarLeccion(200) == false) lecciones = false;
+    if (modulo.agregarLeccion(300) == false) lecciones = false;
+    if (modulo.getCantidadLecciones() != 3) lecciones = false;
+    if (modulo.existeLeccion(200) == false || modulo.existeLeccion(999) == true) lecciones = false;
+    if (modulo.getIdsLecciones()[0] != 100 || modulo.getIdsLecciones()[2] != 300) lecciones = false; // conserva el orden
+    if (modulo.agregarLeccion(200) == true) lecciones = false; // ID repetido
+    if (modulo.getCantidadLecciones() != 3) lecciones = false;
+    if (modulo.eliminarLeccion(200) == false || modulo.existeLeccion(200) == true) lecciones = false;
+    if (modulo.eliminarLeccion(999) == true) lecciones = false;
+    if (modulo.getCantidadLecciones() != 2) lecciones = false;
+    if (modulo.getIdsLecciones()[0] != 100 || modulo.getIdsLecciones()[1] != 300) lecciones = false;
+
+    Modulo conLecciones(7, 3, "Arboles", examen, { 1, 2, 3, 4 });
+    if (conLecciones.getCantidadLecciones() != 4) lecciones = false;
+    if (conLecciones.getEvaluacion().getIdEvaluacion() != 50) lecciones = false;
+    Modulo copiaModulo = conLecciones; // la copia tiene sus propios ids
+    copiaModulo.eliminarLeccion(1);
+    if (conLecciones.existeLeccion(1) == false || copiaModulo.existeLeccion(1) == true) lecciones = false;
+    conLecciones.setIdsLecciones({ 9 });
+    if (conLecciones.getCantidadLecciones() != 1 || conLecciones.existeLeccion(9) == false) lecciones = false;
+
     // Reporte
     cout << "\n========== REPORTE MODULO ==========\n";
     cout << "Constructor: " << constructor << "\n";
     cout << "Setters: " << setters << "\n";
     cout << "Evaluacion: " << evaluacion << "\n";
+    cout << "Lecciones: " << lecciones << "\n";
 
-    int total = constructor + setters + evaluacion;
-    cout << "\nTotal: " << total << "/3\n\n";
+    int total = constructor + setters + evaluacion + lecciones;
+    cout << "\nTotal: " << total << "/4\n\n";
 }
 
 void probarModuloAVL() {
@@ -652,7 +689,7 @@ void probarModuloAVL() {
     bool rotaciones = true;
     bool eliminar = true;
     bool carga = true;
-    bool copia = true;
+    bool temporal = true;
     bool vaciar = true;
 
     // Insertar y rotaciones (LL, RR, LR, RL)
@@ -704,31 +741,6 @@ void probarModuloAVL() {
     if (arbol.contarModulos() != 7) duplicado = false;
     if (arbol.getModulo(50)->getNombre() == "Duplicado") duplicado = false;
 
-    // Copia profunda (constructor de copia y asignacion)
-    ModuloAVL<Modulo> copiaArbol(arbol);
-    if (copiaArbol.contarModulos() != 7) copia = false;
-    if (copiaArbol.getAltura() != arbol.getAltura()) copia = false;
-    if (copiaArbol.estaBalanceado() == false) copia = false;
-    if (copiaArbol.getRaiz() == arbol.getRaiz()) copia = false; // no comparten nodos
-    copiaArbol.getModulo(40)->setNombre("Cambiado");
-    if (arbol.getModulo(40)->getNombre() != "Modulo40") copia = false; // modificar la copia no afecta al original
-    copiaArbol.eliminar(40);
-    if (arbol.getModulo(40) == nullptr) copia = false;
-    if (arbol.contarModulos() != 7) copia = false;
-
-    ModuloAVL<Modulo> asignado;
-    asignado.insertar(crearModulo(1, "Previo", 1));
-    asignado = arbol;
-    if (asignado.contarModulos() != 7) copia = false; // reemplaza lo que tenia
-    if (asignado.getModulo(1) != nullptr) copia = false;
-    asignado = asignado; // autoasignacion no debe romper nada
-    if (asignado.contarModulos() != 7) copia = false;
-
-    vector<ModuloAVL<Modulo>> lista; // las copias al agregar a un vector no deben liberar dos veces los nodos
-    lista.push_back(arbol);
-    lista.push_back(asignado);
-    if (lista[0].contarModulos() != 7 || lista[1].contarModulos() != 7) copia = false;
-
     // Eliminar (hoja, un hijo, dos hijos, raiz, inexistente)
     if (arbol.eliminar(20) == false) eliminar = false;
     if (arbol.getModulo(20) != nullptr) eliminar = false;
@@ -767,6 +779,57 @@ void probarModuloAVL() {
     if (masivo.estaBalanceado() == false) carga = false;
     if (masivo.getModulo(2) == nullptr || masivo.getModulo(3) != nullptr) carga = false;
 
+    // Temporal: arbol de un curso armado desde sus ids, a partir del arbol global
+    ModuloAVL<Modulo> global; // 5 cursos x 10 modulos, IDs ascendentes
+    vector<int> idsCurso[5];
+    for (int c = 0; c < 5; c++) {
+        for (int m = 0; m < 10; m++) {
+            int id = 40000 + c * 10 + m;
+            if (global.insertar(crearModulo(id, "Modulo" + to_string(id), 30000 + c)) == false) temporal = false;
+            idsCurso[c].push_back(id);
+        }
+    }
+    if (global.contarModulos() != 50 || global.estaBalanceado() == false) temporal = false;
+
+    Curso cursoTemp(30002, 1, "Curso temporal", {}, idsCurso[2]);
+    {
+        ModuloAVL<Modulo> delCurso(cursoTemp.getIdsModulos(), global);
+        if (delCurso.contarModulos() != 10) temporal = false;
+        if (delCurso.estaBalanceado() == false) temporal = false;
+        for (int m = 0; m < 10; m++) {
+            Modulo* modulo = delCurso.getModulo(40020 + m);
+            if (modulo == nullptr || modulo->getIdCurso() != 30002) temporal = false;
+        }
+        if (delCurso.getModulo(40000) != nullptr || delCurso.getModulo(40030) != nullptr) temporal = false; // otros cursos
+
+        // Modificar el temporal no cambia el global (guarda copias)
+        delCurso.getModulo(40021)->setNombre("Cambiado");
+        if (global.getModulo(40021)->getNombre() != "Modulo40021") temporal = false;
+        delCurso.eliminar(40021);
+        if (delCurso.contarModulos() != 9 || global.getModulo(40021) == nullptr) temporal = false;
+    } // al destruirse el temporal el global debe seguir intacto
+    if (global.contarModulos() != 50 || global.getModulo(40025) == nullptr) temporal = false;
+    if (global.getModulo(40021)->getNombre() != "Modulo40021") temporal = false;
+
+    // IDs que no estan en el global se ignoran y una lista vacia da un arbol vacio
+    vector<int> conFaltantes = { 40000, 99999, 40001 };
+    ModuloAVL<Modulo> parcial(conFaltantes, global);
+    if (parcial.contarModulos() != 2 || parcial.getModulo(99999) != nullptr) temporal = false;
+    vector<int> sinIds;
+    ModuloAVL<Modulo> vacio(sinIds, global);
+    if (vacio.contarModulos() != 0 || vacio.getRaiz() != nullptr || vacio.getAltura() != -1) temporal = false;
+
+    // El orden de los ids no importa: el temporal siempre queda balanceado
+    vector<int> alReves(idsCurso[3].rbegin(), idsCurso[3].rend());
+    ModuloAVL<Modulo> invertido(alReves, global);
+    if (invertido.contarModulos() != 10 || invertido.estaBalanceado() == false) temporal = false;
+
+    // Si se elimina un modulo del global, el temporal nuevo ya no lo incluye
+    if (global.eliminar(40010) == false) temporal = false;
+    ModuloAVL<Modulo> tras(idsCurso[1], global);
+    if (tras.contarModulos() != 9 || tras.getModulo(40010) != nullptr) temporal = false;
+    if (global.contarModulos() != 49 || global.estaBalanceado() == false) temporal = false;
+
     // Vaciar
     arbol.eliminar(40);
     arbol.eliminar(60);
@@ -782,12 +845,12 @@ void probarModuloAVL() {
     cout << "Buscar: " << buscar << "\n";
     cout << "Duplicado: " << duplicado << "\n";
     cout << "Rotaciones: " << rotaciones << "\n";
-    cout << "Copia: " << copia << "\n";
+    cout << "Temporal: " << temporal << "\n";
     cout << "Eliminar: " << eliminar << "\n";
     cout << "Carga: " << carga << "\n";
     cout << "Vaciar: " << vaciar << "\n";
 
-    int total = insertar + buscar + duplicado + rotaciones + copia + eliminar + carga + vaciar;
+    int total = insertar + buscar + duplicado + rotaciones + temporal + eliminar + carga + vaciar;
     cout << "\nTotal: " << total << "/8\n\n";
 }
 
