@@ -59,7 +59,7 @@ public:
         return false;
     }
     bool agregarEjercicio(int pidEjercicio) {
-        if (!existeEjercicios) {
+        if (!existeEjercicios(pidEjercicio)) {
             idsEjercicios.push_back(pidEjercicio);
             return true;
         }

@@ -201,7 +201,7 @@ public:
 
         for (size_t i = 0; i < estudiantes.size(); i++) {
             cout << i << ".\t" << estudiantes[i].getId() << "\t"
-                << estudiantes[i].getNombre() << " " << estudiantes[i].getApellido() << "\t"
+                << estudiantes[i].getNombre() << " " << estudiantes[i].getApellido() << "\t\t"
                 << estudiantes[i].getProgreso().getProgresoCurso() << "%" << endl;
         }
         cout << endl;

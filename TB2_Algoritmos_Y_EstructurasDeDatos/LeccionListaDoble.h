@@ -20,8 +20,8 @@ template <typename T>
 class LeccionListaDoble
 {
 private:
-	NodoLeccion* head;
-	NodoLeccion* tail;
+	NodoLeccion<T>* head;
+	NodoLeccion<T>* tail;
 	int cantidad;
 
 public:

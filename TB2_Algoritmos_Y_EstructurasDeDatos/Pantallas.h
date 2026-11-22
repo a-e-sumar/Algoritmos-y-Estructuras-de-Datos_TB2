@@ -7,7 +7,7 @@ using namespace std;
 const int PROFESOR_BASE = 10000;
 const int PROFESOR_LIMITE = 10099;   // 100 profesores
 const int ESTUDIANTE_BASE = 20000;
-const int ESTUDIANTE_LIMITE = 24999;   // 5000 estudiantes
+const int ESTUDIANTE_LIMITE = 23999;   // 4000 estudiantes
 
 static void limpiarPantalla() { system("cls"); }
 
@@ -67,12 +67,11 @@ int pantallaProfesor(string nombre) {
         cout << "7. Ordenar estudiantes por progreso" << endl;
         cout << "8. Ordenar estudiantes por ID" << endl;
         cout << "9. Ordenar estudiantes por nombre" << endl;
-        cout << "10. Ver estructura del arbol AVL de cursos" << endl;
-        cout << "11. Ver informacion del curso" << endl;
-        cout << "12. Cerrar sesion" << endl << endl;
+        cout << "10. Ver informacion del curso" << endl;
+        cout << "11. Cerrar sesion" << endl << endl;
         cout << "Seleccione: ";
         cin >> opcion;
-    } while (opcion < 1 || opcion > 12);
+    } while (opcion < 1 || opcion > 11);
     return opcion;
 }
 

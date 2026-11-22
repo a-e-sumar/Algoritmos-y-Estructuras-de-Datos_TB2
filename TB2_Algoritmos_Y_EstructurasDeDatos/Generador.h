@@ -19,7 +19,7 @@ using namespace std;
 #include "EjercicioHashTable.h"
 
 const int PROFESORES = 100;
-const int ESTUDIANTES = 5000;
+const int ESTUDIANTES = 4000;
 const int CURSOS = 100;
 const int MODULOS = 1000;
 const int LECCIONES = 1000;
@@ -599,4 +599,13 @@ void generarLeccionesEjercicios(LeccionListaDoble<Leccion>& lecciones, Ejercicio
         cout << "ADVERTENCIA: se insertaron " << ejerciciosInsertados << " de " << EJERCICIOS << " ejercicios\n";
     }
 
+}
+
+void generarTodo(ProfesorBST<Profesor>& profesores, EstudianteHashTable<Estudiante>& estudiantes, 
+    CursoAVL<Curso>& cursos, ModuloAVL<Modulo>& modulos, LeccionListaDoble<Leccion>& lecciones, EjercicioHashTable<Ejercicio>& ejercicios) {
+    generarProfesor(profesores);
+    generarCursos(cursos);
+    generarEstudiantes(estudiantes, profesores,cursos);
+    generarModulosEvaluaciones(modulos, cursos);
+    generarLeccionesEjercicios(lecciones, ejercicios, modulos);
 }

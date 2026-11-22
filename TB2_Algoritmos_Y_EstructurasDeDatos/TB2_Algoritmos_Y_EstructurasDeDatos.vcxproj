@@ -142,6 +142,7 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Controlador.h" />
     <ClInclude Include="Curso.h" />
     <ClInclude Include="CursoAVL.h" />
     <ClInclude Include="Ejercicio.h" />
