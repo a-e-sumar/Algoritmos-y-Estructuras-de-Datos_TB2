@@ -35,7 +35,7 @@ public:
     // Getters
     const vector<RegistroEvaluacion>& getRegistros() { return registros; }
     int getCantidad() { return (int)registros.size(); } // evaluaciones distintas registradas
-    int getIntentos(int pidEvaluacion)
+    int getIntentos(int pidEvaluacion) {
         int posicion = buscarPosicion(pidEvaluacion);
         if (posicion == -1) {
             return 0;
