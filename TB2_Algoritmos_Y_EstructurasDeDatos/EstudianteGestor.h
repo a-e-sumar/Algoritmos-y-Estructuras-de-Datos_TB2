@@ -84,13 +84,17 @@ private:
 
     void heapify(vector<Estudiante>& lista, int n, int indicePadre)
     {
+        auto idMayor = [](Estudiante& a, Estudiante& b) {
+            return a.getId() > b.getId();
+        };
+
         int mayor = indicePadre;
         int izquierdo = 2 * indicePadre + 1;
         int derecho = 2 * indicePadre + 2;
-        if (izquierdo < n && lista[izquierdo].getId() > lista[mayor].getId()) {
+        if (izquierdo < n && idMayor(lista[izquierdo], lista[mayor])) {
             mayor = izquierdo;
         }
-        if (derecho < n && lista[derecho].getId() > lista[mayor].getId()) {
+        if (derecho < n && idMayor(lista[derecho], lista[mayor])) {
             mayor = derecho;
         }
         if (mayor != indicePadre) {
@@ -114,24 +118,11 @@ private:
         }
     }
 
-    string aMinuscula(string texto) {
+    static string aMinuscula(string texto) {
         for (size_t i = 0; i < texto.size(); i++) {
             texto[i] = (char)tolower((unsigned char)texto[i]);
         }
         return texto;
-    }
-
-    // primero por nombre, si empatan por apellido y luego por id
-    bool nombreMenorIgual(Estudiante& a, Estudiante& b) {
-        string nombreA = aMinuscula(a.getNombre());
-        string nombreB = aMinuscula(b.getNombre());
-        if (nombreA != nombreB) return nombreA < nombreB;
-
-        string apellidoA = aMinuscula(a.getApellido());
-        string apellidoB = aMinuscula(b.getApellido());
-        if (apellidoA != apellidoB) return apellidoA < apellidoB;
-
-        return a.getId() <= b.getId();
     }
 
     // Particionar
@@ -140,12 +131,25 @@ private:
         int medio = inicio + (fin - inicio) / 2;
         swap(estudiantes[medio], estudiantes[fin]);
 
+        // primero por nombre, si empatan por apellido y luego por id
+        auto vaAntes = [](Estudiante& a, Estudiante& b) {
+            string nombreA = aMinuscula(a.getNombre());
+            string nombreB = aMinuscula(b.getNombre());
+            if (nombreA != nombreB) return nombreA < nombreB;
+
+            string apellidoA = aMinuscula(a.getApellido());
+            string apellidoB = aMinuscula(b.getApellido());
+            if (apellidoA != apellidoB) return apellidoA < apellidoB;
+
+            return a.getId() <= b.getId();
+        };
+
         Estudiante pivote = estudiantes[fin];
         int i = inicio - 1;
 
         for (int j = inicio; j < fin; j++) {
             // Si el estudiante va antes o igual que el pivote
-            if (nombreMenorIgual(estudiantes[j], pivote)) {
+            if (vaAntes(estudiantes[j], pivote)) {
                 i++;
                 swap(estudiantes[i], estudiantes[j]);
             }
