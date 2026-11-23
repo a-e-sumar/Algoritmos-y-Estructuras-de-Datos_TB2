@@ -42,8 +42,12 @@ private:
 
         vector<Estudiante> temporal(fin - inicio + 1);
 
+        auto vaAntes = [](Estudiante& estudainteA, Estudiante& estudianteB) {
+            return estudainteA.getProgreso().getProgresoCurso() >= estudianteB.getProgreso().getProgresoCurso();
+            };
+
         while (izquierda <= medio && derecha <= fin) {
-            if (lista[izquierda].getProgreso().getProgresoCurso() >= lista[derecha].getProgreso().getProgresoCurso()) {
+            if (vaAntes(lista[izquierda], lista[derecha])) {
                 temporal[posicion] = lista[izquierda];
                 izquierda++;
             }
