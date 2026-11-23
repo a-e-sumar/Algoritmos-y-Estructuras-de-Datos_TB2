@@ -104,10 +104,12 @@ public:
 		cargarDatos();
 		int op;
 		int id;
+		auto esProfesor = [](int id) { return id >= PROFESOR_BASE && id <= PROFESOR_LIMITE; };
+		auto esEstudiante = [](int id) { return id >= ESTUDIANTE_BASE && id <= ESTUDIANTE_LIMITE; };
 		op = pantallaInicio();
 		if (op == 1) {
 			id = pantallaInicioSesion();
-			if (id / 10000 == 1) {
+			if (esProfesor(id)) {
 				//Buscar profesor
 				profesor = profesoresEstructura.getProfesor(id);
 				if (profesor == nullptr) {
@@ -117,12 +119,15 @@ public:
 					profesorLogica();
 				}
 			}
-			else if (id / 10000 == 2) {
+			else if (esEstudiante(id)) {
 				//Buscar estudiante
 				estudiante = estudiantesEstructura.getEstudiante(id);
 				if (estudiante == nullptr) {
 					cout << "NO se encontro el ID. Intentelo de nuevo" << endl;
 				}
+			}
+			else {
+				cout << "ID invalido. Intentelo de nuevo" << endl;
 			}
 		}
 		else {

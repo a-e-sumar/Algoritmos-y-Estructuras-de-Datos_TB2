@@ -14,6 +14,8 @@
 #include "EjercicioCola.h"
 #include "Modulo.h"
 #include "ModuloAVL.h"
+#include "HistorialEjercicio.h"
+#include "HistorialEvaluacion.h"
 using namespace std;
 
 Profesor crearProfesor(int id, string nombre, int idCurso) {
@@ -885,6 +887,175 @@ void probarModuloAVL() {
     cout << "\nTotal: " << total << "/8\n\n";
 }
 
+void probarHistorialEjercicio() {
+    bool constructor = true;
+    bool agregar = true;
+    bool duplicado = true;
+    bool existe = true;
+    bool porLeccion = true;
+    bool carga = true;
+
+    // Ejercicios 1..20: 4 por leccion (ejercicios 1-4 en la leccion 1, 5-8 en la 2, ...)
+    EjercicioHashTable<Ejercicio> tabla;
+    for (int i = 1; i <= 20; i++) tabla.insertar(crearEjercicio(i, (i - 1) / 4 + 1));
+
+    // Constructor
+    HistorialEjercicio historial;
+    if (historial.getCantidad() != 0) constructor = false;
+    if (historial.getIdsEjercicios().empty() == false) constructor = false;
+    if (historial.existe(1) == true) constructor = false;
+    if (historial.contarPorLeccion(1, tabla) != 0) constructor = false;
+
+    // Agregar
+    if (historial.agregar(1) == false) agregar = false;
+    if (historial.agregar(2) == false) agregar = false;
+    if (historial.agregar(3) == false) agregar = false;
+    if (historial.agregar(5) == false) agregar = false;
+    if (historial.agregar(9) == false) agregar = false;
+    if (historial.getCantidad() != 5) agregar = false;
+    if (historial.getIdsEjercicios()[0] != 1 || historial.getIdsEjercicios()[4] != 9) agregar = false; // conserva el orden
+
+    // Duplicado
+    if (historial.agregar(3) == true) duplicado = false;
+    if (historial.agregar(1) == true) duplicado = false;
+    if (historial.getCantidad() != 5) duplicado = false;
+
+    // Existe
+    if (historial.existe(1) == false || historial.existe(9) == false) existe = false;
+    if (historial.existe(4) == true || historial.existe(1000) == true || historial.existe(0) == true) existe = false;
+
+    // Contar por leccion (leccion 1: 1,2,3 | leccion 2: 5 | leccion 3: 9)
+    if (historial.contarPorLeccion(1, tabla) != 3) porLeccion = false;
+    if (historial.contarPorLeccion(2, tabla) != 1) porLeccion = false;
+    if (historial.contarPorLeccion(3, tabla) != 1) porLeccion = false;
+    if (historial.contarPorLeccion(4, tabla) != 0) porLeccion = false;
+    if (historial.contarPorLeccion(99, tabla) != 0) porLeccion = false; // leccion inexistente
+    historial.agregar(777); // ejercicio que no esta en la tabla: cuenta en el historial pero no en ninguna leccion
+    if (historial.getCantidad() != 6) porLeccion = false;
+    if (historial.contarPorLeccion(1, tabla) != 3) porLeccion = false;
+    historial.agregar(4);
+    if (historial.contarPorLeccion(1, tabla) != 4) porLeccion = false; // leccion 1 completa
+
+    // Copia: cada historial es independiente
+    HistorialEjercicio copia = historial;
+    copia.agregar(20);
+    if (historial.existe(20) == true || copia.existe(20) == false) agregar = false;
+
+    // Carga: 2000 ejercicios, repetidos se rechazan
+    HistorialEjercicio grande;
+    for (int i = 1; i <= 2000; i++) {
+        if (grande.agregar(100000 + i) == false) carga = false;
+    }
+    for (int i = 1; i <= 2000; i += 2) {
+        if (grande.agregar(100000 + i) == true) carga = false;
+    }
+    if (grande.getCantidad() != 2000) carga = false;
+    if (grande.existe(100001) == false || grande.existe(102000) == false || grande.existe(102001) == true) carga = false;
+
+    // Reporte
+    cout << "\n========== REPORTE HISTORIAL EJERCICIO ==========\n";
+    cout << "Constructor: " << constructor << "\n";
+    cout << "Agregar: " << agregar << "\n";
+    cout << "Duplicado: " << duplicado << "\n";
+    cout << "Existe: " << existe << "\n";
+    cout << "Por leccion: " << porLeccion << "\n";
+    cout << "Carga: " << carga << "\n";
+
+    int total = constructor + agregar + duplicado + existe + porLeccion + carga;
+    cout << "\nTotal: " << total << "/6\n\n";
+}
+
+void probarHistorialEvaluacion() {
+    bool constructor = true;
+    bool registrar = true;
+    bool sumar = true;
+    bool intentos = true;
+    bool invalido = true;
+    bool porModulo = true;
+    bool carga = true;
+
+    // Modulos 1..5 con su evaluacion (101..105); el modulo 6 no tiene evaluacion
+    ModuloAVL<Modulo> modulos;
+    for (int m = 1; m <= 5; m++) {
+        Evaluacion examen(100 + m, m, "P1", "P2", "R1", "R2");
+        modulos.insertar(Modulo(m, 1, "Modulo" + to_string(m), examen));
+    }
+    modulos.insertar(crearModulo(6, "SinExamen", 1));
+
+    // Constructor
+    HistorialEvaluacion historial;
+    if (historial.getCantidad() != 0) constructor = false;
+    if (historial.getRegistros().empty() == false) constructor = false;
+    if (historial.existe(101) == true) constructor = false;
+    if (historial.getIntentos(101) != 0) constructor = false;
+
+    // Registrar (por defecto 1 intento)
+    if (historial.registrar(101) == false) registrar = false;
+    if (historial.registrar(102, 3) == false) registrar = false;
+    if (historial.getCantidad() != 2) registrar = false;
+    if (historial.existe(101) == false || historial.existe(102) == false || historial.existe(103) == true) registrar = false;
+    if (historial.getRegistros()[0].idEvaluacion != 101 || historial.getRegistros()[1].idEvaluacion != 102) registrar = false;
+
+    // Si ya existe suma intentos y no crea otro registro
+    if (historial.registrar(101) == false) sumar = false;
+    if (historial.registrar(101, 2) == false) sumar = false;
+    if (historial.registrar(102, 1) == false) sumar = false;
+    if (historial.getCantidad() != 2) sumar = false;
+    if (historial.getRegistros().size() != 2) sumar = false;
+
+    // getIntentos
+    if (historial.getIntentos(101) != 4) intentos = false; // 1 + 1 + 2
+    if (historial.getIntentos(102) != 4) intentos = false; // 3 + 1
+    if (historial.getIntentos(999) != 0) intentos = false;
+
+    // Intentos invalidos no cambian nada
+    if (historial.registrar(103, 0) == true) invalido = false;
+    if (historial.registrar(103, -2) == true) invalido = false;
+    if (historial.existe(103) == true) invalido = false;
+    if (historial.registrar(101, 0) == true) invalido = false;
+    if (historial.getIntentos(101) != 4 || historial.getCantidad() != 2) invalido = false;
+
+    // Contar por modulo (cada modulo tiene una evaluacion: 1 si la realizo, 0 si no)
+    if (historial.contarPorModulo(1, modulos) != 1) porModulo = false;
+    if (historial.contarPorModulo(2, modulos) != 1) porModulo = false;
+    if (historial.contarPorModulo(3, modulos) != 0) porModulo = false; // no realizo la evaluacion 103
+    if (historial.contarPorModulo(99, modulos) != 0) porModulo = false; // modulo inexistente
+    historial.registrar(555); // evaluacion que no pertenece a ningun modulo
+    if (historial.contarPorModulo(4, modulos) != 0 || historial.contarPorModulo(5, modulos) != 0) porModulo = false;
+    historial.registrar(0); // un modulo sin evaluacion (id 0) no cuenta
+    if (historial.contarPorModulo(6, modulos) != 0) porModulo = false;
+    historial.registrar(103);
+    if (historial.contarPorModulo(3, modulos) != 1) porModulo = false;
+
+    // Copia: cada historial es independiente
+    HistorialEvaluacion copia = historial;
+    copia.registrar(101, 5);
+    if (historial.getIntentos(101) != 4 || copia.getIntentos(101) != 9) sumar = false;
+
+    // Carga: 1000 evaluaciones y 3 intentos cada una
+    HistorialEvaluacion grande;
+    for (int i = 1; i <= 1000; i++) {
+        grande.registrar(60000 + i);
+        grande.registrar(60000 + i, 2);
+    }
+    if (grande.getCantidad() != 1000) carga = false;
+    if (grande.getIntentos(60001) != 3 || grande.getIntentos(61000) != 3) carga = false;
+    if (grande.existe(61001) == true) carga = false;
+
+    // Reporte
+    cout << "\n========== REPORTE HISTORIAL EVALUACION ==========\n";
+    cout << "Constructor: " << constructor << "\n";
+    cout << "Registrar: " << registrar << "\n";
+    cout << "Sumar: " << sumar << "\n";
+    cout << "Intentos: " << intentos << "\n";
+    cout << "Invalido: " << invalido << "\n";
+    cout << "Por modulo: " << porModulo << "\n";
+    cout << "Carga: " << carga << "\n";
+
+    int total = constructor + registrar + sumar + intentos + invalido + porModulo + carga;
+    cout << "\nTotal: " << total << "/7\n\n";
+}
+
 void ejecutarPruebas() {
     cout << "\tINICIO DE PRUEBAS\n\n";
     cout << "\nBST:\n";
@@ -907,5 +1078,9 @@ void ejecutarPruebas() {
     probarModulo();
     cout << "\nModulo AVL:\n";
     probarModuloAVL();
+	cout << "\nHistorial Ejercicio:\n";
+	probarHistorialEjercicio();
+	cout << "\nHistorial Evaluacion:\n";
+	probarHistorialEvaluacion();
     cout << "\n\tFIN DE PRUEBAS\n";
 }
