@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <iomanip>
 using namespace std;
 
 template<typename T>
@@ -194,8 +195,10 @@ private:
         if (nodo == nullptr)
             return;
         mostrarInOrden(nodo->izquierda);
-        cout << nodo->dato.getIdModulo() << "\t" << nodo->dato.getNombre() << "\t"
-            << "Curso: " << nodo->dato.getIdCurso() << endl;
+        cout << left << setw(10) << nodo->dato.getIdModulo()
+            << setw(35) << nodo->dato.getNombre()
+            << setw(15) << nodo->dato.getIdCurso() 
+            << setw(10) << "Lecciones: " << nodo->dato.getCantidadLecciones() << endl;
         mostrarInOrden(nodo->derecha);
     }
     void mostrarArbol(NodoModulo<T>* nodo, int nivel) {
@@ -268,8 +271,8 @@ public:
         return verificarAVL(raiz);
     }
     void listarModulos() {
-        cout << "\n\t\t=== Modulos ===\n";
-        cout << "Id\tNombre\tCurso\n";
+        cout << "\n\t\t=== Modulos ===\n\n";
+        cout << "Id\tNombre del modulo\t\tCurso (ID)\tLecciones (Cantidad)\n";
         cout << "------------------------------------------------\n";
         mostrarInOrden(raiz);
         cout << endl;

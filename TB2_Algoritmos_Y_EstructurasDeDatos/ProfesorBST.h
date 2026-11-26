@@ -104,6 +104,15 @@ private:
             return 0;
         return 1 + contarNodos(nodo->izquierda) + contarNodos(nodo->derecha);
     }
+    void inOrden(NodoProfesor<T>* nodo, int contador = 0) {
+        if (nodo == nullptr) {
+            return;
+        }
+        inOrden(nodo->izquierda, contador);
+        cout << contador << ".\t"; contador++;
+        cout << nodo->dato.getNombre() << " "<< nodo->dato.getApellido() << "\t\t" << nodo->dato.getId() << endl;
+        inOrden(nodo->derecha, contador);
+    }
 
     void liberar(NodoProfesor<T>* nodo) {
         if (nodo == nullptr)
@@ -142,5 +151,9 @@ public:
     int contarProfesores() {
         return contarNodos(raiz);
     }
-
+    void mostrar() {
+        cout << "\n\t=== Profesores ===\n";
+        cout << "\n#\tNombre\t\t\tId" << endl;
+        inOrden(raiz);
+    }
 };

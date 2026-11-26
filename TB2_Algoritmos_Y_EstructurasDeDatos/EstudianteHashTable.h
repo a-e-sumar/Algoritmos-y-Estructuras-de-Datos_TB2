@@ -120,4 +120,20 @@ public:
 	bool duplicado(int clave) {
 		return buscar(clave) != -1;
 	}
+	void mostrar() {
+		cout << "\n\t\t\t=== Estudiantes ===\n";
+		cout << "\nPosicion\tEstado\t\tNombre\t\t\tId" << endl;
+		for (int i = 0; i < TAM_ESTUDIANTES; i++)
+		{
+			cout << i << ".\t\t";
+			if (tabla[i].estado == 1) {
+				cout << "Ocupado\t\t";
+			}
+			else {
+				cout << "Vacio\t\t";
+			}
+			cout << tabla[i].dato.getNombre() << " " << tabla[i].dato.getApellido() << "\t\t" << tabla[i].dato.getId();
+			cout << endl;
+		}
+	}
 };

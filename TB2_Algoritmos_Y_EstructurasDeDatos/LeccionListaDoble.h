@@ -24,6 +24,18 @@ private:
 	NodoLeccion<T>* tail;
 	int cantidad;
 
+    void mostrarAdelante(NodoLeccion<T>* head)
+    {
+        NodoLeccion<T>* actual = head;
+        while (actual != nullptr) {
+            cout << left << setw(10) <<  actual->dato.getIdLeccion()
+                << setw(45) << actual->dato.getNombre()
+                << setw(15) << actual->dato.getIdModulo()
+                << setw(10) << actual->dato.getCanntidadEjercicios() << endl;
+            actual = actual->siguiente;
+        }
+        cout << "NULL\n";
+    }
 public:
     LeccionListaDoble() {
         head = nullptr;
@@ -100,5 +112,11 @@ public:
         tail = nullptr;
         cantidad = 0;
     }
-
+    
+    void mostrar() {
+        cout << "\n\t\t\t\t=== Lecciones ===\n\n";
+        cout << "Id\tNombre de la leccion\t\t\tModulo (ID)\t\tEjercicios (Cantidad)\n";
+        cout << "------------------------------------------------------------------------------------------------\n";
+        mostrarAdelante(head);
+    }
 };

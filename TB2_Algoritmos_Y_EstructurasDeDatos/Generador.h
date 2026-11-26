@@ -22,7 +22,7 @@ const int PROFESORES = 100;
 const int ESTUDIANTES = 4000;
 const int CURSOS = 100;
 const int MODULOS = 1000;
-const int LECCIONES = 1000;
+const int LECCIONES = 5000;
 const int EJERCICIOS = 20000;
 
 const int ProfesorBASE = 10000;
@@ -576,10 +576,9 @@ void generarLeccionesEjercicios(LeccionListaDoble<Leccion>& lecciones, Ejercicio
         string contenidoLeccion = generarContenido();
         vector<int> idsEjercicios;
 
-        for (int j = 0; j < 2; j++)
+        for (int j = 0; j < 4; j++)
         {
-            int idEjercicio = EjercicioBASE + j + (i * 2);
-
+            int idEjercicio = EjercicioBASE + j + (i * 5);
             int idxPregunta = rand() % cantidadPreguntas();
             string enunciado = preguntas[idxPregunta];
             string respuesta = respuestas[idxPregunta];

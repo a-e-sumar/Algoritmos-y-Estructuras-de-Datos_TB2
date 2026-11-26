@@ -29,6 +29,51 @@ public:
 	void cargarDatos() {
 		generarTodo(profesoresEstructura, estudiantesEstructura, cursosEstructura, modulosEstructura, leccionesEstructura, ejerciciosEstructura);
 	}
+	void adminLogica() {
+		int op;
+		do {
+			op = pantallaAdmin();
+			switch (op)
+			{
+			case 1:
+			{
+				estudiantesEstructura.mostrar();
+				pausarPantalla();
+				break;
+			}
+			case 2:
+			{
+				profesoresEstructura.mostrar();
+				pausarPantalla();
+				break;
+			}
+			case 3:
+			{
+				cursosEstructura.listarCursos();
+				pausarPantalla();
+				break;
+			}
+			case 4:
+			{
+				modulosEstructura.listarModulos();
+				pausarPantalla();
+				break;
+			}
+			case 5:
+			{
+				leccionesEstructura.mostrar();
+				pausarPantalla();
+				break;
+			}
+			case 6:
+			{
+				pantallaCierreSesion();
+			}
+			default:
+				break;
+			}
+		} while (op != 6);
+	}
 	void profesorLogica() {
 		int op;
 		int idCurso = profesor->getIdCurso();
@@ -93,7 +138,6 @@ public:
 			}
 			case 11: {
 				pantallaCierreSesion();
-				pausarPantalla();
 			}
 			default:
 				break;
@@ -102,38 +146,44 @@ public:
 	}
 	void programa() {
 		cargarDatos();
+		// Descomentar pause para ver si hay advertencias del generador
+		// pausarPantalla();
 		int op;
 		int id;
 		auto esProfesor = [](int id) { return id >= PROFESOR_BASE && id <= PROFESOR_LIMITE; };
 		auto esEstudiante = [](int id) { return id >= ESTUDIANTE_BASE && id <= ESTUDIANTE_LIMITE; };
-		op = pantallaInicio();
-		if (op == 1) {
-			id = pantallaInicioSesion();
-			if (esProfesor(id)) {
-				//Buscar profesor
-				profesor = profesoresEstructura.getProfesor(id);
-				if (profesor == nullptr) {
-					cout << "NO se encontro el ID. Intentelo de nuevo" << endl;
+		do {
+			op = pantallaInicio();
+			if (op == 1) {
+				id = pantallaInicioSesion();
+				if (esProfesor(id)) {
+					//Buscar profesor
+					profesor = profesoresEstructura.getProfesor(id);
+					if (profesor == nullptr) {
+						cout << "NO se encontro el ID. Intentelo de nuevo" << endl;
+					}
+					else {
+						profesorLogica();
+					}
+				}
+				else if (esEstudiante(id)) {
+					//Buscar estudiante
+					estudiante = estudiantesEstructura.getEstudiante(id);
+					if (estudiante == nullptr) {
+						cout << "NO se encontro el ID. Intentelo de nuevo" << endl;
+					}
+				}
+				else if (id == 1) {
+					adminLogica();
 				}
 				else {
-					profesorLogica();
-				}
-			}
-			else if (esEstudiante(id)) {
-				//Buscar estudiante
-				estudiante = estudiantesEstructura.getEstudiante(id);
-				if (estudiante == nullptr) {
-					cout << "NO se encontro el ID. Intentelo de nuevo" << endl;
+					cout << "ID invalido. Intentelo de nuevo" << endl;
 				}
 			}
 			else {
-				cout << "ID invalido. Intentelo de nuevo" << endl;
+				pantallaCierreSesion();
+				corriendo = false;
 			}
-		}
-		else {
-			pantallaCierreSesion();
-			corriendo = false;
-		}
-
+		} while (op != 2);
 	}
 };

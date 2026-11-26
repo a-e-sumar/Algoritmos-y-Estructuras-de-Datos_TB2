@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <iomanip>
 using namespace std;
 
 template<typename T>
@@ -192,9 +193,10 @@ private:
         if (nodo == nullptr)
             return;
         mostrarInOrden(nodo->izquierda);
-        cout << nodo->dato.getIdCurso() << "\t" << nodo->dato.getNombre() << "\t"
-            << "Prof: " << nodo->dato.getIdProfesor() << "\t"
-            << "Estudiantes: " << nodo->dato.getCantidadEstudiantes() << endl;
+        cout << left << setw(10) << nodo->dato.getIdCurso() << "\t"
+            << setw(45) << nodo->dato.getNombre()
+            << setw(15) << nodo->dato.getIdProfesor()
+            << setw(10) << "Estudiantes: " << nodo->dato.getCantidadEstudiantes() << endl;
         mostrarInOrden(nodo->derecha);
     }
     void mostrarArbol(NodoCurso<T>* nodo, int nivel) {
@@ -255,8 +257,8 @@ public:
         return verificarAVL(raiz);
     }
     void listarCursos() {
-        cout << "\n\t\t=== Cursos ===\n";
-        cout << "Id\tNombre\tProfesor\tEstudiantes\n";
+        cout << "\n\t\t\t\t=== Cursos ===\n\n";
+        cout << "Id\tNombre del curso\t\t\tProfesor (ID)\t\tEstudiantes (Cantidad)\n";
         cout << "------------------------------------------------\n";
         mostrarInOrden(raiz);
         cout << endl;

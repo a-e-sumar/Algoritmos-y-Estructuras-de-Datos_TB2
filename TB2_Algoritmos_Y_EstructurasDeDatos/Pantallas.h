@@ -44,8 +44,9 @@ int pantallaInicioSesion() {
     cout << "Bienvenido/a al sistema." << endl;
     cout << "Ingrese su ID para iniciar sesion." << endl << endl;
     cout << "Rango de IDs validos:" << endl;
-    cout << "  Profesor  : " << PROFESOR_BASE << " - " << PROFESOR_LIMITE << endl;
-    cout << "  Estudiante: " << ESTUDIANTE_BASE << " - " << ESTUDIANTE_LIMITE << endl << endl;
+    cout << "  Administrador: 1" << endl;
+    cout << "  Profesor     : " << PROFESOR_BASE << " - " << PROFESOR_LIMITE << endl;
+    cout << "  Estudiante   : " << ESTUDIANTE_BASE << " - " << ESTUDIANTE_LIMITE << endl << endl;
     cout << "ID: ";
     int id;
     cin >> id;
@@ -89,6 +90,24 @@ int pantallaEstudiante(string nombre) {
         cout << "Seleccione: ";
         cin >> opcion;
     } while (opcion < 1 || opcion > 5);
+    return opcion;
+}
+
+int pantallaAdmin() {
+    int opcion;
+    do {
+        limpiarPantalla();
+        encabezadoPantalla();
+        cout << "Bienvenido/a, " << endl << endl;
+        cout << "1. Ver estudiantes" << endl;
+        cout << "2. Ver profesores" << endl;
+        cout << "3. Ver cursos" << endl;
+        cout << "4. Ver modulos" << endl;
+        cout << "5. Ver lecciones" << endl;
+        cout << "6. Cerrar sesion" << endl << endl;
+        cout << "Seleccione: ";
+        cin >> opcion;
+    } while (opcion < 1 || opcion > 6);
     return opcion;
 }
 
