@@ -51,7 +51,7 @@ public:
     int getCanntidadEjercicios() { return (int)idsEjercicios.size(); }
 
     bool existeEjercicios(int pidEjercicio) {
-        for (size_t i = 0; i < getCanntidadEjercicios(); i++) {
+        for (int i = 0; i < getCanntidadEjercicios(); i++) {
             if (idsEjercicios[i] == pidEjercicio) {
                 return true;
             }
