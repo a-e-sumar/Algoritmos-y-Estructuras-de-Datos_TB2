@@ -1,6 +1,7 @@
 #pragma once
 #include "Generador.h"
 #include "Pantallas.h"
+#include "GestorArchivos.h"
 
 class Controlador
 {
@@ -17,6 +18,7 @@ private:
 	LeccionListaDoble<Leccion> leccionesEstructura;
 	EjercicioHashTable<Ejercicio> ejerciciosEstructura;
 	EstudianteGestor gestor;
+	GestorArchivos gestorArchivos;
 public:
 	Controlador() {
 		corriendo = true;
@@ -26,8 +28,53 @@ public:
 	~Controlador() {
 
 	}
+
+	//PROVISONAL (usa Progreso como esta ahora)
+	void guardarProgresoEstudiantes() {
+		vector<RegistroProgreso> registros;
+		for (int id = ESTUDIANTE_BASE; id <= ESTUDIANTE_LIMITE; id++) {
+			Estudiante* e = estudiantesEstructura.getEstudiante(id);
+			if (e != nullptr) {
+				RegistroProgreso registro;
+				registro.idEstudiante = id;
+				registro.progresoCurso = e->getProgreso().getProgresoCurso();
+				registro.progresoModulo = e->getProgreso().getProgresoModulo();
+				registro.progresoLeccion = e->getProgreso().getProgresoLeccion();
+				registro.progresoEjercicio = e->getProgreso().getProgresoEjercicio();
+				registros.push_back(registro);
+			}
+		}
+		gestorArchivos.guardarProgresos(registros);
+	}
+
+	//PROVISONAL x2
+
+	void cargarProgresoEstudiantes() {
+		vector<RegistroProgreso> registros;
+		if (!gestorArchivos.cargarProgresos(registros)) {
+			return;
+		}
+		for (size_t i = 0; i < registros.size(); i++) {
+			Estudiante* e = estudiantesEstructura.getEstudiante(registros[i].idEstudiante);
+			if (e != nullptr) {
+				e->getProgreso().setProgresoCurso(registros[i].progresoCurso);
+				e->getProgreso().setProgresoModulo(registros[i].progresoModulo);
+				e->getProgreso().setProgresoLeccion(registros[i].progresoLeccion);
+				e->getProgreso().setProgresoEjercicio(registros[i].progresoEjercicio);
+			}
+		}
+	}
+
 	void cargarDatos() {
-		generarTodo(profesoresEstructura, estudiantesEstructura, cursosEstructura, modulosEstructura, leccionesEstructura, ejerciciosEstructura);
+		if (gestorArchivos.existeContenido()) {
+			gestorArchivos.cargarContenido(profesoresEstructura, estudiantesEstructura, cursosEstructura, modulosEstructura, leccionesEstructura, ejerciciosEstructura);
+			cargarProgresoEstudiantes();
+		}
+		else {
+			generarTodo(profesoresEstructura, estudiantesEstructura, cursosEstructura, modulosEstructura, leccionesEstructura, ejerciciosEstructura);
+			gestorArchivos.guardarContenido(profesoresEstructura, estudiantesEstructura, cursosEstructura, modulosEstructura, leccionesEstructura, ejerciciosEstructura);
+			guardarProgresoEstudiantes();
+		}
 	}
 	void adminLogica() {
 		int op;

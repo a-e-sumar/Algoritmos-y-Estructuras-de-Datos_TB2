@@ -528,6 +528,7 @@ public:
         nuevo.progresoLeccion = pprogresoLeccion;
         nuevo.progresoEjercicio = pprogresoEjercicio;
 
+        fstream archivo;
         archivo.open(ArchivoProgreso.c_str(), ios::in | ios::out | ios::binary);
         if (archivo.is_open()) {
             RegistroProgreso registro;
@@ -575,10 +576,91 @@ public:
     }
 
     // Historial de ejercicios
-    bool agregarEjercicioCompletado(int pidEstudiante, int pidEjercicio) { return false; }
-    bool cargarHistorialEjercicio(int pidEstudiante, HistorialEjercicio& phistorial) { return false; }
+
+    bool agregarEjercicioCompletado(int pidEstudiante, int pidEjercicio) {
+        ofstream archivo;
+        archivo.open(ArchivoHistorialEjercicios.c_str(), ios::out | ios::app | ios::binary);
+        if (!archivo.is_open()) {
+            return false;
+        }
+        RegistroHistorialEjercicio registro;
+        registro.idEstudiante = pidEstudiante;
+        registro.idEjercicio = pidEjercicio;
+        archivo.write((char*)&registro, sizeof(RegistroHistorialEjercicio));
+        bool correcto = !(!archivo);
+        archivo.close();
+        return correcto;
+    }
+
+    bool cargarHistorialEjercicio(int pidEstudiante, HistorialEjercicio& phistorial) {
+        ifstream archivo;
+        archivo.open(ArchivoHistorialEjercicios.c_str(), ios::in | ios::binary);
+        if (!archivo.is_open()) {
+            return false;
+        }
+        RegistroHistorialEjercicio registro;
+        while (archivo.read((char*)&registro, sizeof(RegistroHistorialEjercicio))) {
+            if (registro.idEstudiante == pidEstudiante) {
+                phistorial.agregar(registro.idEjercicio);
+            }
+        }
+        archivo.close();
+        return true;
+    }
 
     // Historial de evaluaciones
-    bool registrarIntentoEvaluacion(int pidEstudiante, int pidEvaluacion, int pintentos = 1) { return false; }
-    bool cargarHistorialEvaluacion(int pidEstudiante, HistorialEvaluacion& phistorial) { return false; }
+
+    bool registrarIntentoEvaluacion(int pidEstudiante, int pidEvaluacion, int pintentos = 1) {
+        if (pintentos <= 0) {
+            return false;
+        }
+        fstream archivo;
+        archivo.open(ArchivoHistorialEvaluaciones.c_str(), ios::in | ios::out | ios::binary);
+        if (archivo.is_open()) {
+            RegistroHistorialEvaluacion registro;
+            int posicion = 0;
+            while (archivo.read((char*)&registro, sizeof(RegistroHistorialEvaluacion))) {
+                if (registro.idEstudiante == pidEstudiante && registro.idEvaluacion == pidEvaluacion) {
+                    registro.intentos += pintentos;
+                    archivo.seekp(posicion * sizeof(RegistroHistorialEvaluacion), ios::beg);
+                    archivo.write((char*)&registro, sizeof(RegistroHistorialEvaluacion));
+                    bool correcto = !(!archivo);
+                    archivo.close();
+                    return correcto;
+                }
+                posicion++;
+            }
+            archivo.close();
+        }
+
+        ofstream salida;
+        salida.open(ArchivoHistorialEvaluaciones.c_str(), ios::out | ios::app | ios::binary);
+        if (!salida.is_open()) {
+            return false;
+        }
+        RegistroHistorialEvaluacion nuevo;
+        nuevo.idEstudiante = pidEstudiante;
+        nuevo.idEvaluacion = pidEvaluacion;
+        nuevo.intentos = pintentos;
+        salida.write((char*)&nuevo, sizeof(RegistroHistorialEvaluacion));
+        bool correcto = !(!salida);
+        salida.close();
+        return correcto;
+    }
+
+    bool cargarHistorialEvaluacion(int pidEstudiante, HistorialEvaluacion& phistorial) {
+        ifstream archivo;
+        archivo.open(ArchivoHistorialEvaluaciones.c_str(), ios::in | ios::binary);
+        if (!archivo.is_open()) {
+            return false;
+        }
+        RegistroHistorialEvaluacion registro;
+        while (archivo.read((char*)&registro, sizeof(RegistroHistorialEvaluacion))) {
+            if (registro.idEstudiante == pidEstudiante) {
+                phistorial.registrar(registro.idEvaluacion, registro.intentos);
+            }
+        }
+        archivo.close();
+        return true;
+    }
 };
