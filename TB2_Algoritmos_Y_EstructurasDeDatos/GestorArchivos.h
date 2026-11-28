@@ -316,10 +316,8 @@ public:
     }
 
     // Cargar
-    
 
-	//caragan en el oden: profesores, cursos, estudiantes, modulos, lecciones, ejercicios
-    //porque cada uno depende del anterior para poder agregarse a su respectivo padre
+	//caragan en el oden: profesores, cursos, estudiantes, modulos, lecciones, ejercicios porque dependen del anterior
 
     bool cargarProfesores(ProfesorBST<Profesor>& pprofesores) {
         ifstream archivo;
@@ -492,10 +490,89 @@ public:
 	// ARCHIVOS BINARIOS
 
     // Progreso
-    bool guardarProgresos(const vector<RegistroProgreso>& pregistros) { return false; }
-    bool cargarProgresos(vector<RegistroProgreso>& pregistros) { return false; }
-    bool guardarProgreso(int pidEstudiante, int pprogresoCurso, int pprogresoModulo, int pprogresoLeccion, int pprogresoEjercicio) { return false; }
-    bool cargarProgreso(int pidEstudiante, RegistroProgreso& pregistro) { return false; }
+
+    bool guardarProgresos(const vector<RegistroProgreso>& pregistros) {
+        ofstream archivo;
+        archivo.open(ArchivoProgreso.c_str(), ios::out | ios::binary);
+        if (!archivo.is_open()) {
+            return false;
+        }
+        for (size_t i = 0; i < pregistros.size(); i++) {
+            RegistroProgreso registro = pregistros[i];
+            archivo.write((char*)&registro, sizeof(RegistroProgreso));
+        }
+        bool correcto = !(!archivo);
+        archivo.close();
+        return correcto;
+    }
+
+    bool cargarProgresos(vector<RegistroProgreso>& pregistros) {
+        ifstream archivo;
+        archivo.open(ArchivoProgreso.c_str(), ios::in | ios::binary);
+        if (!archivo.is_open()) {
+            return false;
+        }
+        RegistroProgreso registro;
+        while (archivo.read((char*)&registro, sizeof(RegistroProgreso))) {
+            pregistros.push_back(registro);
+        }
+        archivo.close();
+        return true;
+    }
+
+    bool guardarProgreso(int pidEstudiante, int pprogresoCurso, int pprogresoModulo, int pprogresoLeccion, int pprogresoEjercicio) {
+        RegistroProgreso nuevo;
+        nuevo.idEstudiante = pidEstudiante;
+        nuevo.progresoCurso = pprogresoCurso;
+        nuevo.progresoModulo = pprogresoModulo;
+        nuevo.progresoLeccion = pprogresoLeccion;
+        nuevo.progresoEjercicio = pprogresoEjercicio;
+
+        archivo.open(ArchivoProgreso.c_str(), ios::in | ios::out | ios::binary);
+        if (archivo.is_open()) {
+            RegistroProgreso registro;
+            int posicion = 0;
+            while (archivo.read((char*)&registro, sizeof(RegistroProgreso))) {
+                if (registro.idEstudiante == pidEstudiante) {
+                    archivo.seekp(posicion * sizeof(RegistroProgreso), ios::beg);
+                    archivo.write((char*)&nuevo, sizeof(RegistroProgreso));
+                    bool correcto = !(!archivo);
+                    archivo.close();
+                    return correcto;
+                }
+                posicion++;
+            }
+            archivo.close();
+        }
+
+        ofstream salida;
+        salida.open(ArchivoProgreso.c_str(), ios::out | ios::app | ios::binary);
+        if (!salida.is_open()) {
+            return false;
+        }
+        salida.write((char*)&nuevo, sizeof(RegistroProgreso));
+        bool correcto = !(!salida);
+        salida.close();
+        return correcto;
+    }
+
+    bool cargarProgreso(int pidEstudiante, RegistroProgreso& pregistro) {
+        ifstream archivo;
+        archivo.open(ArchivoProgreso.c_str(), ios::in | ios::binary);
+        if (!archivo.is_open()) {
+            return false;
+        }
+        RegistroProgreso registro;
+        while (archivo.read((char*)&registro, sizeof(RegistroProgreso))) {
+            if (registro.idEstudiante == pidEstudiante) {
+                pregistro = registro;
+                archivo.close();
+                return true;
+            }
+        }
+        archivo.close();
+        return false;
+    }
 
     // Historial de ejercicios
     bool agregarEjercicioCompletado(int pidEstudiante, int pidEjercicio) { return false; }
